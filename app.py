@@ -1,18 +1,8 @@
 """
 🌸 Cutie Calc  -  Cute Scientific Calculator (Streamlit)
 --------------------------------------------------------
-Run:   streamlit run cutie_calculator.py
+Run:    streamlit run cutie_calculator.py
 Needs: streamlit >= 1.39   (pip install -U streamlit)
-
-Functions
-  Basic     + − × ÷  ( )  %  ±  Ans  ⌫  AC
-  Trig      sin cos tan  | 2nd: sin⁻¹ cos⁻¹ tan⁻¹ | hyp: sinh cosh tanh | hyp+2nd: inverse hyperbolic
-  Log/Exp   ln log  | 2nd: eˣ 10ˣ        xʸ | 2nd: ʸ√x        EXP (×10^)
-  Powers    √  | 2nd: x²        x³ | 2nd: ∛x        1/x | 2nd: ⌈x⌉        |x| | 2nd: ⌊x⌋
-  Others    n!  nPr  nCr  mod  π  e  °  Ran#
-  Memory    MC MR M+ M− MS
-  Modes     DEG / RAD / GRAD
-  Extra     live preview, auto-close brackets, history, safe parser (no eval)
 """
 
 import ast
@@ -29,7 +19,7 @@ st.set_page_config(page_title="Cutie Calc", page_icon="🌸", layout="centered")
 # ════════════════════════════════════════════════════════════════════
 #  1.  SAFE MATH ENGINE
 # ════════════════════════════════════════════════════════════════════
-BIN_TOKENS = ("+", "−", "×", "÷", "^", "mod")          # binary operators (display form)
+BIN_TOKENS = ("+", "−", "×", "÷", "^", "mod")         # binary operators (display form)
 POSTFIX = ("!", "%", "^2", "^3", "°", "×10^(", "^(1/(")  # need an operand before them
 
 
@@ -184,14 +174,14 @@ ALT = {  # action -> (normal, 2nd)
     "RECIP": ("1/(", "ceil("), "ABS": ("abs(", "floor("),
 }
 _NAMES = ["asinh", "acosh", "atanh", "asin", "acos", "atan", "sinh", "cosh", "tanh",
-          "sin", "cos", "tan", "cbrt", "ceil", "floor", "exp", "abs", "log", "ln"]
+         "sin", "cos", "tan", "cbrt", "ceil", "floor", "exp", "abs", "log", "ln"]
 TOKEN_END = re.compile("(?:(?:" + "|".join(_NAMES) + r")\(|√\(|Ans|mod|×10\^\(|\^\(1/\()$")
 
 
 def insert(t: str):
     s = st.session_state
     binary, postfix = t in BIN_TOKENS, t in POSTFIX
-    if s.fresh:                                   # '=' ke baad naya number => naya start
+    if s.fresh:                                     # '=' ke baad naya number => naya start
         if not (binary or postfix):
             s.expr = ""
         s.fresh = False
@@ -202,9 +192,9 @@ def insert(t: str):
         prev = last_op(e)
         if prev:
             if t == "−" and prev in ("×", "÷", "^"):
-                pass                              # 5×−3 allowed
+                pass                                # 5×−3 allowed
             else:
-                e = e[: -len(prev)]               # operator replace
+                e = e[: -len(prev)]                 # operator replace
         if e.endswith("(") and t != "−":
             return
     elif postfix and (not e or last_op(e) or e.endswith("(")):
@@ -382,12 +372,12 @@ def press(a: str):
         press_digit(a)
     elif a in ("(", ")"):
         press_bracket(a)
-    else:                                         # + − × ÷ % 
+    else:                                           # + − × ÷ % 
         insert(a)
 
 
 # ════════════════════════════════════════════════════════════════════
-#  3.  CUTE LOOK
+#  3.  CUTE LOOK WITH CREAM/SOFT WHITE BORDER HIGHLIGHT
 # ════════════════════════════════════════════════════════════════════
 STYLE = """
 <style>
@@ -404,21 +394,22 @@ html { scroll-behavior:smooth; }
 }
 header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"] { display:none; }
 #MainMenu, footer, [data-testid="stStatusWidget"] { visibility:hidden; }
-/* rerun ke time dhundla/flicker na ho */
 [data-stale="true"] { opacity:1 !important; transition:none !important; }
 
-/* body + cat ears */
+/* body + cat ears with Cream / Soft White Highlight Border */
 .block-container {
   position:relative; max-width:430px; margin:3rem auto 2rem !important;
   padding:1rem 1rem 1.2rem !important;
   background:linear-gradient(160deg,#ffd6ea,#ffeaf4 55%,#eadfff);
-  border:4px solid #fff; border-radius:38px;
-  box-shadow:0 26px 50px rgba(214,120,170,.35), inset 0 -6px 0 rgba(240,150,190,.22);
+  /* Cream / Soft White Border Highlight */
+  border:4px solid #eae2d0 !important; 
+  border-radius:38px;
+  box-shadow:0 26px 50px rgba(214,120,170,.35), 0 0 30px rgba(234,226,208,0.4), inset 0 -6px 0 rgba(240,150,190,.22);
 }
 .block-container::before, .block-container::after {
-  content:""; position:absolute; top:-26px; width:62px; height:62px;
+  content:""; position:absolute; top:-30px; width:62px; height:62px;
   background:radial-gradient(circle at 50% 100%, #ff9ec6 0 38%, #ffc3df 40%);
-  border:4px solid #fff; border-bottom:0; border-radius:50% 50% 0 0 / 90% 90% 0 0;
+  border:4px solid #eae2d0; border-bottom:0; border-radius:50% 50% 0 0 / 90% 90% 0 0;
   clip-path:inset(0 0 34px 0);
 }
 .block-container::before { left:34px; }
@@ -471,7 +462,7 @@ div[class*="st-key-eq_"]  { --bg:#ff6fa8; --fg:#ffffff; --edge:#d63f7f; }
 div[class*="st-key-mem_"] button, div[class*="st-key-tog_"] button { font-size:.88rem; }
 
 /* history */
-div[data-testid="stExpander"] { background:rgba(255,255,255,.6); border:2px solid #fff !important; border-radius:18px; margin-top:.3rem; }
+div[data-testid="stExpander"] { background:rgba(255,255,255,.6); border:2px solid #eae2d0 !important; border-radius:18px; margin-top:.3rem; }
 div[data-testid="stExpander"] summary, div[data-testid="stExpander"] p,
 div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#9a5a8d !important; fill:#9a5a8d; }
 div[data-testid="stExpander"] code { background:#ffe3f0; color:#a03a70; }
@@ -483,9 +474,9 @@ def lcd_html() -> str:
     """Upar: input.  Neeche: answer / live result."""
     s = st.session_state
 
-    if s.fresh:                                   # '=' dabane ke baad
+    if s.fresh:                                     # '=' dabane ke baad
         inp, res, cls = s.top, s.expr, " pop"
-    else:                                         # type karte waqt
+    else:                                           # type karte waqt
         inp, res, cls = s.expr, "", " live"
         if s.expr and not re.fullmatch(r"[\d.]+", s.expr):
             try:
