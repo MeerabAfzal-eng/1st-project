@@ -168,7 +168,7 @@ for _k, _v in DEFAULTS.items():
     st.session_state.setdefault(_k, _v)
 
 TRIG = {"SIN": "sin", "COS": "cos", "TAN": "tan"}
-ALT = {  # action -> (normal, 2nd)
+ALT = {  # action -> (normal, shift)
     "LN": ("ln(", "exp("), "LOG": ("log(", "10^("), "SQRT": ("√(", "^2"),
     "POW": ("^", "^(1/("), "CUBE": ("^3", "cbrt("),
     "RECIP": ("1/(", "ceil("), "ABS": ("abs(", "floor("),
@@ -401,7 +401,6 @@ header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecor
   position:relative; max-width:430px; margin:3rem auto 2rem !important;
   padding:1rem 1rem 1.2rem !important;
   background:linear-gradient(160deg,#ffd6ea,#ffeaf4 55%,#eadfff);
-  /* Cream / Soft White Border Highlight */
   border:4px solid #eae2d0 !important; 
   border-radius:38px;
   box-shadow:0 26px 50px rgba(214,120,170,.35), 0 0 30px rgba(234,226,208,0.4), inset 0 -6px 0 rgba(240,150,190,.22);
@@ -418,7 +417,6 @@ header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecor
 .cute-title { text-align:center; font-weight:600; font-size:1.25rem; color:#d0488a; margin:.1rem 0 .6rem; letter-spacing:.02em; }
 .cute-title small { display:block; font-weight:400; font-size:.72rem; color:#b88aa8; letter-spacing:.08em; }
 
-/* grid mobile par bhi wrap na ho */
 div[data-testid="stHorizontalBlock"] { flex-wrap:nowrap !important; gap:.4rem !important; }
 div[data-testid="stColumn"], div[data-testid="column"] { min-width:0 !important; flex:1 1 0 !important; width:auto !important; }
 div[data-testid="stVerticalBlock"] { gap:.4rem; }
@@ -497,7 +495,7 @@ def lcd_html() -> str:
     if s.error:
         res_size = 1.3
 
-    flags = [s.angle] + (["2nd"] if s.inv else []) + (["hyp"] if s.hyp else []) \
+    flags = [s.angle] + (["SHIFT"] if s.inv else []) + (["hyp"] if s.hyp else []) \
         + (["M"] if s.mem != 0 else [])
     flag_html = "".join(f"<span>{f}</span>" for f in flags)
     return (
@@ -507,7 +505,6 @@ def lcd_html() -> str:
     )
 
 
-# (kind, action) - kind sirf colour decide karta hai
 GRID = [
     [("mem", "MC"), ("mem", "MR"), ("mem", "M+"), ("mem", "M−"), ("mem", "MS")],
     [("tog", "ANGLE"), ("tog", "HYP"), ("tog", "INV"), ("ext", "EXP"), ("ext", "RAN")],
@@ -524,10 +521,10 @@ KEYS = {a: f"{k}_{r}{c}" for r, row in enumerate(GRID) for c, (k, a) in enumerat
 
 STATIC_LABELS = {
     "PI": "π", "E": "e", "FACT": "n!", "DEL": "⌫", "ANS": "Ans", "SIGN": "±",
-    "INV": "2nd", "HYP": "hyp", "EXP": "EXP", "RAN": "Ran#", "NPR": "nPr",
+    "INV": "SHIFT", "HYP": "hyp", "EXP": "EXP", "RAN": "Ran#", "NPR": "nPr",
     "NCR": "nCr", "MOD": "mod", "DEG": "°",
 }
-ALT_LABELS = {  # (normal, 2nd)
+ALT_LABELS = {  # (normal, shift)
     "LN": ("ln", "eˣ"), "LOG": ("log", "10ˣ"), "SQRT": ("√", "x²"),
     "POW": ("xʸ", "ʸ√x"), "CUBE": ("x³", "∛x"), "RECIP": ("1/x", "⌈x⌉"), "ABS": ("|x|", "⌊x⌋"),
 }
@@ -544,9 +541,6 @@ def label(a: str) -> str:
     return STATIC_LABELS.get(a, a)
 
 
-# ════════════════════════════════════════════════════════════════════
-#  4.  RENDER  (fragment = sirf calculator rerun hota hai => smooth)
-# ════════════════════════════════════════════════════════════════════
 _fragment = getattr(st, "fragment", None) or getattr(st, "experimental_fragment", None) \
     or (lambda f: f)
 
