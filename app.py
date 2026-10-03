@@ -1,7 +1,7 @@
 """
-Scientific Calculator  -  Professional Blue Edition (Streamlit)
+Scientific Calculator  -  Soft Blue Edition (Streamlit)
 -------------------------------------------------------
-Run:   streamlit run pro_calculator.py
+Run:   streamlit run soft_blue_calculator.py
 Needs: streamlit >= 1.39   (pip install -U streamlit)
 """
 
@@ -377,100 +377,98 @@ def press(a: str):
 
 
 # ════════════════════════════════════════════════════════════════════
-#  3.  PROFESSIONAL BLUE LOOK
+#  3.  SOFT BLUE CUTE LOOK
 # ════════════════════════════════════════════════════════════════════
 STYLE = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
 
 html { scroll-behavior:smooth; }
 .stApp {
-  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-family:'Fredoka','Nunito',ui-rounded,'Segoe UI',sans-serif;
   background:
-    radial-gradient(900px 520px at 50% -10%, #d9e4fa 0%, transparent 62%),
-    linear-gradient(180deg, #f1f5fb 0%, #e4ebf6 100%);
+    radial-gradient(#ffffff 2px, transparent 2.6px) 0 0 / 30px 30px,
+    radial-gradient(circle at 12% 10%, #d9e6ff 0, transparent 42%),
+    radial-gradient(circle at 90% 88%, #e5dcff 0, transparent 46%),
+    #eaf1ff;
 }
 header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"] { display:none; }
 #MainMenu, footer, [data-testid="stStatusWidget"] { visibility:hidden; }
 [data-stale="true"] { opacity:1 !important; transition:none !important; }
 
-/* body */
+/* body  +  bear ears */
 .block-container {
-  max-width:440px; margin:2rem auto 2rem !important; padding:1rem 1.1rem 1.25rem !important;
-  background:linear-gradient(180deg, #fafbfe 0%, #e8eef9 100%);
-  border:1px solid #c7d4ec; border-radius:28px;
-  box-shadow:0 30px 60px rgba(31,58,138,.20), 0 2px 6px rgba(31,58,138,.10),
-             inset 0 1px 0 #ffffff, inset 0 -4px 0 rgba(31,58,138,.06);
+  position:relative; max-width:440px; margin:3.4rem auto 2rem !important;
+  padding:1rem 1.05rem 1.2rem !important;
+  background:linear-gradient(160deg, #a9c6ff 0%, #c6d8ff 45%, #dcd2ff 100%);
+  border:4px solid #fff; border-radius:42px;
+  box-shadow:0 26px 50px rgba(60,90,190,.32), inset 0 -7px 0 rgba(80,115,225,.20);
 }
+.block-container::before, .block-container::after {
+  content:""; position:absolute; top:-36px; width:76px; height:72px;
+  background:radial-gradient(circle at 50% 100%, #eef3ff 0 34%, #8fb0ff 36%);
+  border:4px solid #fff; border-bottom:0; border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  clip-path:inset(0 0 36px 0);
+}
+.block-container::before { left:38px; }
+.block-container::after  { right:38px; }
 
-/* upar ki patti: model label + solar panel */
-.topbar { display:flex; align-items:center; justify-content:space-between; margin:.05rem .25rem .7rem; }
-.topbar .model { font-size:.62rem; font-weight:600; letter-spacing:.26em; color:#7387b8; }
-.topbar .solar {
-  width:9.6rem; height:1.2rem; border-radius:6px;
-  background:
-    repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 1px, transparent 1px 1.6rem),
-    linear-gradient(180deg, #3a4f93 0%, #1c2c62 100%);
-  border:1px solid #16224d;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 1px 0 #fff;
-}
+/* chhota sa cute chehra */
+.face { display:flex; justify-content:center; align-items:center; gap:.5rem; height:1.5rem; margin:-.15rem 0 .5rem; }
+.face .eye   { width:.55rem; height:.55rem; border-radius:50%; background:#26408f; }
+.face .mouth { width:.85rem; height:.42rem; border-bottom:3px solid #26408f; border-radius:0 0 1rem 1rem; }
+.face .cheek { width:.95rem; height:.55rem; border-radius:50%; background:#ffb8cb; opacity:.85; }
 
 /* grid: mobile par bhi wrap na ho */
 div[data-testid="stHorizontalBlock"] { flex-wrap:nowrap !important; gap:.42rem !important; }
 div[data-testid="stColumn"], div[data-testid="column"] { min-width:0 !important; flex:1 1 0 !important; width:auto !important; }
 div[data-testid="stVerticalBlock"] { gap:.42rem; }
-.sep { height:1px; margin:.28rem .1rem; background:linear-gradient(90deg, transparent, #b9c8e6 20%, #b9c8e6 80%, transparent); }
+.sep { height:0; margin:.3rem .5rem; border-top:3px dotted rgba(70,105,210,.30); }
 
 /* display */
 .lcd {
-  background:linear-gradient(180deg, #1b2f6b 0%, #25418c 100%);
-  border:1px solid #12214f; border-radius:16px;
-  padding:.55rem 1rem .8rem; margin-bottom:.85rem; min-height:150px;
-  box-shadow:inset 0 3px 12px rgba(0,0,0,.35), 0 0 0 4px #dde6f8, 0 0 0 5px #bccbe8;
+  background:linear-gradient(180deg,#fbfdff,#e9f0ff); color:#1f3a8a;
+  border-radius:24px; padding:.55rem 1rem .8rem; margin-bottom:.8rem; min-height:150px;
+  box-shadow:0 0 0 4px #7fa2ff, 0 0 0 7px #fff, inset 0 3px 10px rgba(80,115,225,.28);
 }
-.lcd-flags { display:flex; gap:.35rem; height:1.2rem; }
-.lcd-flags span {
-  background:rgba(255,255,255,.14); color:#d3e0ff; padding:0 .5rem; border-radius:5px;
-  font-size:.64rem; font-weight:600; letter-spacing:.08em; line-height:1.2rem; text-transform:uppercase;
-}
-.lcd-in  { text-align:right; min-height:1.9rem; margin-top:.25rem; line-height:1.25; overflow-wrap:anywhere;
-           font-family:'JetBrains Mono',ui-monospace,monospace; font-weight:400; color:#a3b9ef; }
-.lcd-res { text-align:right; line-height:1.1; margin-top:.35rem; overflow-wrap:anywhere; color:#ffffff;
-           font-weight:600; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
-.lcd-res.live { opacity:.6; }
-.lcd-res.err  { color:#ffb3bd; }
-.lcd-res.pop  { animation:rise .28s ease-out; }
-@keyframes rise { from {transform:translateY(8px); opacity:0;} to {transform:translateY(0); opacity:1;} }
+.lcd-flags { display:flex; gap:.35rem; height:1.25rem; }
+.lcd-flags span { background:#cfe0ff; color:#2a4bb3; padding:0 .55rem; border-radius:99px; font-size:.7rem; font-weight:600; line-height:1.25rem; }
+.lcd-in  { text-align:right; min-height:1.9rem; margin-top:.2rem; line-height:1.25; overflow-wrap:anywhere; font-weight:500; color:#7f95d0; }
+.lcd-res { text-align:right; line-height:1.1; margin-top:.3rem; overflow-wrap:anywhere; font-weight:600; transform-origin:right center; }
+.lcd-res.live { opacity:.5; }
+.lcd-res.err  { color:#e0436b; }
+.lcd-res.pop  { animation:pop .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pop { 0% {transform:scale(.8); opacity:0;} 100% {transform:scale(1); opacity:1;} }
 
 /* keys */
 div[class*="st-key-"] button {
-  width:100%; height:2.6rem; padding:0; border:0 !important; border-radius:12px;
+  width:100%; height:2.65rem; padding:0; border:0 !important; border-radius:16px;
   background:var(--bg) !important; color:var(--fg) !important;
-  font-family:'Inter',sans-serif; font-size:.95rem; font-weight:600; letter-spacing:-.01em;
-  box-shadow:0 3px 0 var(--edge), 0 6px 10px rgba(31,58,138,.12), inset 0 1px 0 rgba(255,255,255,.55);
-  transition:transform .1s ease, box-shadow .1s ease, filter .15s ease, background .15s ease;
+  font-family:'Fredoka',sans-serif; font-size:1.02rem; font-weight:600; letter-spacing:-.01em;
+  box-shadow:0 4px 0 var(--edge), 0 9px 14px rgba(60,90,190,.20);
+  transition:transform .12s cubic-bezier(.34,1.56,.64,1), box-shadow .12s, filter .2s, background .2s;
 }
 div[class*="st-key-"] button p { color:var(--fg) !important; font-size:inherit; font-weight:inherit; }
-div[class*="st-key-"] button:hover  { filter:brightness(1.04); transform:translateY(-1px); }
-div[class*="st-key-"] button:active { transform:translateY(3px); box-shadow:0 0 0 var(--edge); }
-div[class*="st-key-"] button:focus:not(:active) { outline:2px solid rgba(47,107,240,.55); outline-offset:2px; }
+div[class*="st-key-"] button:hover  { filter:brightness(1.05); transform:translateY(-2px); }
+div[class*="st-key-"] button:active { transform:translateY(4px) scale(.97); box-shadow:0 0 0 var(--edge); }
+div[class*="st-key-"] button:focus:not(:active) { outline:3px solid rgba(255,255,255,.95); outline-offset:1px; }
 
-div[class*="st-key-num_"] { --bg:#ffffff; --fg:#1b2f66; --edge:#c3d0ea; }
-div[class*="st-key-fn_"]  { --bg:#e1e9fa; --fg:#24408a; --edge:#b4c4e6; }
-div[class*="st-key-ext_"] { --bg:#eef2fa; --fg:#3a4f85; --edge:#c6d1e6; }
-div[class*="st-key-op_"]  { --bg:#24408a; --fg:#ffffff; --edge:#142659; }
-div[class*="st-key-mem_"] { --bg:#f3f6fc; --fg:#6b7fb0; --edge:#d3dcee; }
-div[class*="st-key-tog_"] { --bg:#fff6dc; --fg:#946200; --edge:#e9d08a; }
-div[class*="st-key-act_"] { --bg:#e5626d; --fg:#ffffff; --edge:#b23a45; }
-div[class*="st-key-eq_"]  { --bg:#2f6bf0; --fg:#ffffff; --edge:#1b46b5; }
-div[class*="st-key-mem_"] button, div[class*="st-key-tog_"] button { font-size:.8rem; letter-spacing:.02em; }
+div[class*="st-key-num_"] { --bg:#ffffff; --fg:#2a4590; --edge:#b4c7f3; }
+div[class*="st-key-fn_"]  { --bg:#d9e4ff; --fg:#2a4bb3; --edge:#a9bcf0; }
+div[class*="st-key-ext_"] { --bg:#cdeaff; --fg:#1f5f9a; --edge:#9ccbee; }
+div[class*="st-key-op_"]  { --bg:#6f9bff; --fg:#ffffff; --edge:#3f6fe0; }
+div[class*="st-key-mem_"] { --bg:#c9f1e4; --fg:#23705a; --edge:#98d7c1; }
+div[class*="st-key-tog_"] { --bg:#fff0b8; --fg:#8a6500; --edge:#ecd57a; }
+div[class*="st-key-act_"] { --bg:#ff94a6; --fg:#ffffff; --edge:#e0607a; }
+div[class*="st-key-eq_"]  { --bg:#2f55d4; --fg:#ffffff; --edge:#1c3a99; }
+div[class*="st-key-mem_"] button, div[class*="st-key-tog_"] button { font-size:.88rem; }
 
 /* history */
-div[data-testid="stExpander"] { background:#ffffff; border:1px solid #c7d4ec !important; border-radius:14px; margin-top:.45rem; }
+div[data-testid="stExpander"] { background:rgba(255,255,255,.65); border:2px solid #fff !important; border-radius:18px; margin-top:.4rem; }
 div[data-testid="stExpander"] summary, div[data-testid="stExpander"] p,
-div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#3a4f85 !important; fill:#3a4f85; }
-div[data-testid="stExpander"] code { background:#eaf0fc; color:#24408a; }
-div[data-testid="stExpander"] strong { color:#1b2f66; }
+div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#3b5bb5 !important; fill:#3b5bb5; }
+div[data-testid="stExpander"] code { background:#e1ebff; color:#2a4bb3; }
+div[data-testid="stExpander"] strong { color:#1f3a8a; }
 </style>
 """
 
@@ -496,9 +494,9 @@ def lcd_html() -> str:
         res, cls = s.error, " err"
 
     n = len(inp)
-    in_size = 1.1 if n <= 18 else 0.95 if n <= 28 else 0.82
+    in_size = 1.35 if n <= 16 else 1.1 if n <= 26 else 0.92
     m = len(res)
-    res_size = 2.4 if m <= 9 else 1.85 if m <= 14 else 1.35 if m <= 24 else 1.05
+    res_size = 2.6 if m <= 9 else 2.0 if m <= 14 else 1.5 if m <= 24 else 1.15
     if s.error:
         res_size = 1.2
 
@@ -556,8 +554,8 @@ _fragment = getattr(st, "fragment", None) or getattr(st, "experimental_fragment"
     or (lambda f: f)
 
 st.markdown(STYLE, unsafe_allow_html=True)
-st.markdown('<div class="topbar"><span class="model">SCIENTIFIC</span>'
-            '<span class="solar"></span></div>', unsafe_allow_html=True)
+st.markdown('<div class="face"><i class="cheek"></i><i class="eye"></i><i class="mouth"></i>'
+            '<i class="eye"></i><i class="cheek"></i></div>', unsafe_allow_html=True)
 
 
 @_fragment
@@ -566,7 +564,7 @@ def calculator():
     active = [KEYS[a] for a, on in (("INV", s.inv), ("HYP", s.hyp)) if on]
     if active:
         rules = "".join(
-            f"div.st-key-{k}{{--bg:#f5b942 !important;--edge:#b9811c !important;--fg:#1f1500 !important;}}"
+            f"div.st-key-{k}{{--bg:#ffd23f !important;--edge:#e0a800 !important;--fg:#5c4400 !important;}}"
             for k in active)
         st.markdown(f"<style>{rules}</style>", unsafe_allow_html=True)
 
@@ -580,14 +578,14 @@ def calculator():
         if r in SEPARATE_AFTER:
             st.markdown('<div class="sep"></div>', unsafe_allow_html=True)
 
-    with st.expander("History"):
+    with st.expander("🕘 History"):
         if s.history:
             for ex, res in s.history[:15]:
                 st.markdown(f"`{ex}` = **{res}**")
             st.button("Clear history", key="act_clear_hist",
                       on_click=lambda: st.session_state.history.clear())
         else:
-            st.caption("Abhi koi calculation nahi hui.")
+            st.caption("Abhi koi calculation nahi hui ✨")
 
 
 calculator()
