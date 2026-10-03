@@ -181,7 +181,7 @@ TOKEN_END = re.compile("(?:(?:" + "|".join(_NAMES) + r")\(|√\(|Ans|mod|×10\^\
 def insert(t: str):
     s = st.session_state
     binary, postfix = t in BIN_TOKENS, t in POSTFIX
-    if s.fresh:                                     # '=' ke baad naya number => naya start
+    if s.fresh:                                     # after '=', a new number starts a fresh expression
         if not (binary or postfix):
             s.expr = ""
         s.fresh = False
@@ -203,7 +203,7 @@ def insert(t: str):
 
 
 def insert_number(txt: str):
-    """Number (Ran#, MR) daalna - pehle se digit ho to × laga do."""
+    """Insert a number (Ran#, MR); add × if it directly follows a digit."""
     s = st.session_state
     if s.fresh:
         s.expr, s.fresh = "", False
@@ -266,7 +266,7 @@ def press_sign():
 
 
 def run(expr: str):
-    """Evaluate + friendly error. Returns float, ya None (error set)."""
+    """Evaluate and set a friendly error message. Returns a float, or None on error."""
     s = st.session_state
     try:
         return evaluate(close_brackets(expr), s.angle, s.ans)
@@ -413,13 +413,13 @@ header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecor
 .block-container::before { left:38px; }
 .block-container::after  { right:38px; }
 
-/* chhota sa cute chehra */
+/* small cute face */
 .face { display:flex; justify-content:center; align-items:center; gap:.5rem; height:1.5rem; margin:-.15rem 0 .5rem; }
 .face .eye   { width:.55rem; height:.55rem; border-radius:50%; background:#26408f; }
 .face .mouth { width:.85rem; height:.42rem; border-bottom:3px solid #26408f; border-radius:0 0 1rem 1rem; }
 .face .cheek { width:.95rem; height:.55rem; border-radius:50%; background:#ffb8cb; opacity:.85; }
 
-/* grid: mobile par bhi wrap na ho */
+/* keep the grid on one row even on mobile */
 div[data-testid="stHorizontalBlock"] { flex-wrap:nowrap !important; gap:.42rem !important; }
 div[data-testid="stColumn"], div[data-testid="column"] { min-width:0 !important; flex:1 1 0 !important; width:auto !important; }
 div[data-testid="stVerticalBlock"] { gap:.42rem; }
@@ -474,12 +474,12 @@ div[data-testid="stExpander"] strong { color:#1f3a8a; }
 
 
 def lcd_html() -> str:
-    """Upar: input.  Neeche: answer / live result."""
+    """Top line: input.  Bottom line: answer / live result."""
     s = st.session_state
 
-    if s.fresh:                                     # '=' dabane ke baad
+    if s.fresh:                                     # after '=' was pressed
         inp, res, cls = s.top, s.expr, " pop"
-    else:                                           # type karte waqt
+    else:                                           # while typing
         inp, res, cls = s.expr, "", " live"
         if s.expr and not re.fullmatch(r"[\d.]+", s.expr):
             try:
@@ -522,7 +522,7 @@ GRID = [
     [("num", "1"), ("num", "2"), ("num", "3"), ("op", "−"), ("ext", "ANS")],
     [("num", "0"), ("num", "."), ("num", "SIGN"), ("op", "+"), ("eq", "=")],
 ]
-SEPARATE_AFTER = {0, 5}      # in rows ke baad patli line aati hai (memory | science | keypad)
+SEPARATE_AFTER = {0, 5}      # a thin divider is drawn after these rows (memory | science | keypad)
 KEYS = {a: f"{k}_{r}{c}" for r, row in enumerate(GRID) for c, (k, a) in enumerate(row)}
 
 STATIC_LABELS = {
@@ -548,7 +548,7 @@ def label(a: str) -> str:
 
 
 # ════════════════════════════════════════════════════════════════════
-#  4.  RENDER  (fragment = sirf calculator rerun hota hai => smooth)
+#  4.  RENDER  (fragment = only the calculator reruns => smoother)
 # ════════════════════════════════════════════════════════════════════
 _fragment = getattr(st, "fragment", None) or getattr(st, "experimental_fragment", None) \
     or (lambda f: f)
@@ -585,7 +585,7 @@ def calculator():
             st.button("Clear history", key="act_clear_hist",
                       on_click=lambda: st.session_state.history.clear())
         else:
-            st.caption("Abhi koi calculation nahi hui ✨")
+            st.caption("No calculations yet ✨")
 
 
 calculator()
