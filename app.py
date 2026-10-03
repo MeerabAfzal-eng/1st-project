@@ -1,7 +1,7 @@
 """
-Scientific Calculator  -  Navy Edition (Streamlit)
---------------------------------------------------
-Run:   streamlit run navy_calculator.py
+Scientific Calculator  -  Soft Blue Edition (Streamlit)
+-------------------------------------------------------
+Run:   streamlit run soft_blue_calculator.py
 Needs: streamlit >= 1.39   (pip install -U streamlit)
 """
 
@@ -377,90 +377,98 @@ def press(a: str):
 
 
 # ════════════════════════════════════════════════════════════════════
-#  3.  NAVY PROFESSIONAL LOOK
+#  3.  SOFT BLUE CUTE LOOK
 # ════════════════════════════════════════════════════════════════════
 STYLE = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
 
 html { scroll-behavior:smooth; }
 .stApp {
-  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-family:'Fredoka','Nunito',ui-rounded,'Segoe UI',sans-serif;
   background:
-    radial-gradient(900px 520px at 50% -8%, #1a3573 0%, transparent 62%),
-    linear-gradient(180deg, #08112a 0%, #050a1a 100%);
+    radial-gradient(#ffffff 2px, transparent 2.6px) 0 0 / 30px 30px,
+    radial-gradient(circle at 12% 10%, #d9e6ff 0, transparent 42%),
+    radial-gradient(circle at 90% 88%, #e5dcff 0, transparent 46%),
+    #eaf1ff;
 }
 header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"] { display:none; }
 #MainMenu, footer, [data-testid="stStatusWidget"] { visibility:hidden; }
 [data-stale="true"] { opacity:1 !important; transition:none !important; }
 
-/* body */
+/* body  +  bear ears */
 .block-container {
-  max-width:440px; margin:2rem auto 2rem !important; padding:1.1rem 1.1rem 1.2rem !important;
-  background:linear-gradient(165deg, #14295a 0%, #0e1f47 55%, #0a1634 100%);
-  border:1px solid rgba(234,226,208,.30); border-radius:26px;
-  box-shadow:
-    0 30px 60px rgba(0,0,0,.55),
-    0 0 0 6px rgba(20,41,90,.35),
-    inset 0 1px 0 rgba(255,255,255,.10);
+  position:relative; max-width:440px; margin:3.4rem auto 2rem !important;
+  padding:1rem 1.05rem 1.2rem !important;
+  background:linear-gradient(160deg, #a9c6ff 0%, #c6d8ff 45%, #dcd2ff 100%);
+  border:4px solid #fff; border-radius:42px;
+  box-shadow:0 26px 50px rgba(60,90,190,.32), inset 0 -7px 0 rgba(80,115,225,.20);
 }
+.block-container::before, .block-container::after {
+  content:""; position:absolute; top:-36px; width:76px; height:72px;
+  background:radial-gradient(circle at 50% 100%, #eef3ff 0 34%, #8fb0ff 36%);
+  border:4px solid #fff; border-bottom:0; border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  clip-path:inset(0 0 36px 0);
+}
+.block-container::before { left:38px; }
+.block-container::after  { right:38px; }
+
+/* chhota sa cute chehra */
+.face { display:flex; justify-content:center; align-items:center; gap:.5rem; height:1.5rem; margin:-.15rem 0 .5rem; }
+.face .eye   { width:.55rem; height:.55rem; border-radius:50%; background:#26408f; }
+.face .mouth { width:.85rem; height:.42rem; border-bottom:3px solid #26408f; border-radius:0 0 1rem 1rem; }
+.face .cheek { width:.95rem; height:.55rem; border-radius:50%; background:#ffb8cb; opacity:.85; }
 
 /* grid: mobile par bhi wrap na ho */
 div[data-testid="stHorizontalBlock"] { flex-wrap:nowrap !important; gap:.42rem !important; }
 div[data-testid="stColumn"], div[data-testid="column"] { min-width:0 !important; flex:1 1 0 !important; width:auto !important; }
 div[data-testid="stVerticalBlock"] { gap:.42rem; }
-.sep { height:1px; margin:.2rem .15rem; background:linear-gradient(90deg, transparent, rgba(143,180,255,.28), transparent); }
+.sep { height:0; margin:.3rem .5rem; border-top:3px dotted rgba(70,105,210,.30); }
 
 /* display */
 .lcd {
-  background:linear-gradient(180deg, #060d22 0%, #0a1431 100%);
-  border:1px solid #24407a; border-radius:16px;
-  padding:.55rem 1rem .8rem; margin-bottom:.8rem; min-height:152px;
-  box-shadow:inset 0 2px 14px rgba(0,0,0,.65), 0 0 0 1px rgba(234,226,208,.07);
+  background:linear-gradient(180deg,#fbfdff,#e9f0ff); color:#1f3a8a;
+  border-radius:24px; padding:.55rem 1rem .8rem; margin-bottom:.8rem; min-height:150px;
+  box-shadow:0 0 0 4px #7fa2ff, 0 0 0 7px #fff, inset 0 3px 10px rgba(80,115,225,.28);
 }
-.lcd-flags { display:flex; gap:.35rem; height:1.2rem; }
-.lcd-flags span {
-  background:#16295a; color:#8fb4ff; padding:0 .5rem; border-radius:5px;
-  font-size:.66rem; font-weight:600; letter-spacing:.08em; line-height:1.2rem; text-transform:uppercase;
-}
-.lcd-in  { text-align:right; min-height:1.9rem; margin-top:.25rem; line-height:1.25; overflow-wrap:anywhere;
-           font-family:'JetBrains Mono',ui-monospace,monospace; font-weight:400; color:#7f93c0; }
-.lcd-res { text-align:right; line-height:1.1; margin-top:.35rem; overflow-wrap:anywhere; color:#f4f8ff;
-           font-family:'JetBrains Mono',ui-monospace,monospace; font-weight:700; font-variant-numeric:tabular-nums; }
-.lcd-res.live { opacity:.55; }
-.lcd-res.err  { color:#ff7a8a; font-family:'Inter',sans-serif; font-weight:600; }
-.lcd-res.pop  { animation:rise .28s ease-out; }
-@keyframes rise { from {transform:translateY(8px); opacity:0;} to {transform:translateY(0); opacity:1;} }
+.lcd-flags { display:flex; gap:.35rem; height:1.25rem; }
+.lcd-flags span { background:#cfe0ff; color:#2a4bb3; padding:0 .55rem; border-radius:99px; font-size:.7rem; font-weight:600; line-height:1.25rem; }
+.lcd-in  { text-align:right; min-height:1.9rem; margin-top:.2rem; line-height:1.25; overflow-wrap:anywhere; font-weight:500; color:#7f95d0; }
+.lcd-res { text-align:right; line-height:1.1; margin-top:.3rem; overflow-wrap:anywhere; font-weight:600; transform-origin:right center; }
+.lcd-res.live { opacity:.5; }
+.lcd-res.err  { color:#e0436b; }
+.lcd-res.pop  { animation:pop .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pop { 0% {transform:scale(.8); opacity:0;} 100% {transform:scale(1); opacity:1;} }
 
 /* keys */
 div[class*="st-key-"] button {
-  width:100%; height:2.6rem; padding:0; border:0 !important; border-radius:11px;
+  width:100%; height:2.65rem; padding:0; border:0 !important; border-radius:16px;
   background:var(--bg) !important; color:var(--fg) !important;
-  font-family:'Inter',sans-serif; font-size:.95rem; font-weight:600; letter-spacing:-.01em;
-  box-shadow:0 3px 0 var(--edge), 0 7px 10px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.08);
-  transition:transform .1s ease, box-shadow .1s ease, filter .15s ease, background .15s ease;
+  font-family:'Fredoka',sans-serif; font-size:1.02rem; font-weight:600; letter-spacing:-.01em;
+  box-shadow:0 4px 0 var(--edge), 0 9px 14px rgba(60,90,190,.20);
+  transition:transform .12s cubic-bezier(.34,1.56,.64,1), box-shadow .12s, filter .2s, background .2s;
 }
 div[class*="st-key-"] button p { color:var(--fg) !important; font-size:inherit; font-weight:inherit; }
-div[class*="st-key-"] button:hover  { filter:brightness(1.12); transform:translateY(-1px); }
-div[class*="st-key-"] button:active { transform:translateY(3px); box-shadow:0 0 0 var(--edge), inset 0 1px 0 rgba(255,255,255,.05); }
-div[class*="st-key-"] button:focus:not(:active) { outline:2px solid rgba(143,180,255,.75); outline-offset:2px; }
+div[class*="st-key-"] button:hover  { filter:brightness(1.05); transform:translateY(-2px); }
+div[class*="st-key-"] button:active { transform:translateY(4px) scale(.97); box-shadow:0 0 0 var(--edge); }
+div[class*="st-key-"] button:focus:not(:active) { outline:3px solid rgba(255,255,255,.95); outline-offset:1px; }
 
-div[class*="st-key-num_"] { --bg:#1f3668; --fg:#f1f5ff; --edge:#0d1b40; }
-div[class*="st-key-fn_"]  { --bg:#152a58; --fg:#a9c4ff; --edge:#0a1633; }
-div[class*="st-key-ext_"] { --bg:#1b3163; --fg:#d3def7; --edge:#0b1838; }
-div[class*="st-key-op_"]  { --bg:#2f62e0; --fg:#ffffff; --edge:#1b3d96; }
-div[class*="st-key-mem_"] { --bg:#0f1e44; --fg:#7f93c0; --edge:#07112b; }
-div[class*="st-key-tog_"] { --bg:#152a58; --fg:#f5c16c; --edge:#0a1633; }
-div[class*="st-key-act_"] { --bg:#d6455a; --fg:#ffffff; --edge:#8e2434; }
-div[class*="st-key-eq_"]  { --bg:#3b82f6; --fg:#ffffff; --edge:#1f56b8; }
-div[class*="st-key-mem_"] button, div[class*="st-key-tog_"] button { font-size:.8rem; letter-spacing:.02em; }
+div[class*="st-key-num_"] { --bg:#ffffff; --fg:#2a4590; --edge:#b4c7f3; }
+div[class*="st-key-fn_"]  { --bg:#d9e4ff; --fg:#2a4bb3; --edge:#a9bcf0; }
+div[class*="st-key-ext_"] { --bg:#cdeaff; --fg:#1f5f9a; --edge:#9ccbee; }
+div[class*="st-key-op_"]  { --bg:#6f9bff; --fg:#ffffff; --edge:#3f6fe0; }
+div[class*="st-key-mem_"] { --bg:#c9f1e4; --fg:#23705a; --edge:#98d7c1; }
+div[class*="st-key-tog_"] { --bg:#fff0b8; --fg:#8a6500; --edge:#ecd57a; }
+div[class*="st-key-act_"] { --bg:#ff94a6; --fg:#ffffff; --edge:#e0607a; }
+div[class*="st-key-eq_"]  { --bg:#2f55d4; --fg:#ffffff; --edge:#1c3a99; }
+div[class*="st-key-mem_"] button, div[class*="st-key-tog_"] button { font-size:.88rem; }
 
 /* history */
-div[data-testid="stExpander"] { background:rgba(255,255,255,.04); border:1px solid #24407a !important; border-radius:14px; margin-top:.4rem; }
+div[data-testid="stExpander"] { background:rgba(255,255,255,.65); border:2px solid #fff !important; border-radius:18px; margin-top:.4rem; }
 div[data-testid="stExpander"] summary, div[data-testid="stExpander"] p,
-div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#9fb4e0 !important; fill:#9fb4e0; }
-div[data-testid="stExpander"] code { background:#14264d; color:#9fc0ff; }
-div[data-testid="stExpander"] strong { color:#f4f8ff; }
+div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#3b5bb5 !important; fill:#3b5bb5; }
+div[data-testid="stExpander"] code { background:#e1ebff; color:#2a4bb3; }
+div[data-testid="stExpander"] strong { color:#1f3a8a; }
 </style>
 """
 
@@ -486,9 +494,9 @@ def lcd_html() -> str:
         res, cls = s.error, " err"
 
     n = len(inp)
-    in_size = 1.15 if n <= 18 else 0.98 if n <= 28 else 0.85
+    in_size = 1.35 if n <= 16 else 1.1 if n <= 26 else 0.92
     m = len(res)
-    res_size = 2.3 if m <= 9 else 1.75 if m <= 14 else 1.3 if m <= 24 else 1.0
+    res_size = 2.6 if m <= 9 else 2.0 if m <= 14 else 1.5 if m <= 24 else 1.15
     if s.error:
         res_size = 1.2
 
@@ -546,6 +554,8 @@ _fragment = getattr(st, "fragment", None) or getattr(st, "experimental_fragment"
     or (lambda f: f)
 
 st.markdown(STYLE, unsafe_allow_html=True)
+st.markdown('<div class="face"><i class="cheek"></i><i class="eye"></i><i class="mouth"></i>'
+            '<i class="eye"></i><i class="cheek"></i></div>', unsafe_allow_html=True)
 
 
 @_fragment
@@ -554,7 +564,7 @@ def calculator():
     active = [KEYS[a] for a, on in (("INV", s.inv), ("HYP", s.hyp)) if on]
     if active:
         rules = "".join(
-            f"div.st-key-{k}{{--bg:#f5b942 !important;--edge:#b9811c !important;--fg:#1f1500 !important;}}"
+            f"div.st-key-{k}{{--bg:#ffd23f !important;--edge:#e0a800 !important;--fg:#5c4400 !important;}}"
             for k in active)
         st.markdown(f"<style>{rules}</style>", unsafe_allow_html=True)
 
@@ -568,14 +578,14 @@ def calculator():
         if r in SEPARATE_AFTER:
             st.markdown('<div class="sep"></div>', unsafe_allow_html=True)
 
-    with st.expander("History"):
+    with st.expander("🕘 History"):
         if s.history:
             for ex, res in s.history[:15]:
                 st.markdown(f"`{ex}` = **{res}**")
             st.button("Clear history", key="act_clear_hist",
                       on_click=lambda: st.session_state.history.clear())
         else:
-            st.caption("Abhi koi calculation nahi hui.")
+            st.caption("Abhi koi calculation nahi hui ✨")
 
 
 calculator()
