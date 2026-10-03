@@ -585,7 +585,7 @@ def calculator():
             st.button("Clear history", key="act_clear_hist",
                       on_click=lambda: st.session_state.history.clear())
         else:
-            st.caption("No calculations yet ✨")
+            st.caption("No calculations yet")
 
 
 calculator()
