@@ -1,77 +1,56 @@
 import streamlit as st
 import math
 
-# Page Configuration
-st.set_page_config(
-    page_title="Professional Scientific Calculator",
-    page_icon="🧮",
-    layout="centered"
-)
+st.set_page_config(page_title="Scientific Calculator", page_icon="🧮", layout="centered")
 
-# Professional CSS Styling (Modern Dark Theme & Clean Buttons)
+# Custom CSS for Professional Grid Calculator
 st.markdown("""
     <style>
-    .main {
-        background-color: #f8f9fa;
-    }
-    .calculator-title {
-        text-align: center;
-        color: #1f2937;
-        font-weight: 700;
-        margin-bottom: 20px;
-    }
-    .calc-screen {
-        background: linear-gradient(135deg, #1e1e2f 0%, #11111d 100%);
+    .calc-display {
+        background-color: #0e1117;
         color: #00ffcc;
-        font-size: 36px;
+        font-size: 32px;
         font-family: monospace;
         font-weight: bold;
         text-align: right;
-        padding: 20px;
-        border-radius: 12px;
+        padding: 15px;
+        border-radius: 10px;
         border: 2px solid #4f46e5;
-        box-shadow: inset 0 4px 6px rgba(0,0,0,0.5);
-        margin-bottom: 25px;
-        word-wrap: break-word;
-        word-break: break-all;
+        margin-bottom: 20px;
     }
-    /* Professional button styling */
-    .stButton > button {
-        width: 100%;
-        height: 55px;
-        font-size: 20px;
-        font-weight: 600;
-        border-radius: 8px;
-        border: none;
-        background-color: #ffffff;
+    /* Button styling to look like a real calculator */
+    div.stButton > button {
+        width: 100% !important;
+        height: 50px !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        border-radius: 8px !important;
+        background-color: #f3f4f6;
         color: #1f2937;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: all 0.2s ease;
+        border: 1px solid #d1d5db;
     }
-    .stButton > button:hover {
-        background-color: #4f46e5;
-        color: #ffffff;
-        border: 1px solid #4f46e5;
+    div.stButton > button:hover {
+        background-color: #4f46e5 !important;
+        color: white !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 class='calculator-title'>🧮 Professional Scientific Calculator</h1>", unsafe_allow_html=True)
+st.title("🧮 Scientific Calculator")
 
-# Session State Initialization
-if "expression" not in st.session_state:
-    st.session_state.expression = ""
+# Session state for calculation string
+if "calc_val" not in st.session_state:
+    st.session_state.calc_val = ""
 
-# Button Click Logic
-def handle_click(val):
+# Function to handle button logic
+def press(val):
     if val == "C":
-        st.session_state.expression = ""
+        st.session_state.calc_val = ""
     elif val == "⌫":
-        st.session_state.expression = st.session_state.expression[:-1]
+        st.session_state.calc_val = st.session_state.calc_val[:-1]
     elif val == "=":
         try:
-            expr = st.session_state.expression
-            # Safe replacements for evaluation
+            expr = st.session_state.calc_val
             expr = expr.replace('×', '*').replace('÷', '/')
             expr = expr.replace('sin(', 'math.sin(math.radians(')
             expr = expr.replace('cos(', 'math.cos(math.radians(')
@@ -81,32 +60,26 @@ def handle_click(val):
             expr = expr.replace('√(', 'math.sqrt(')
             expr = expr.replace('^', '**')
             
-            # Close unclosed brackets automatically
-            open_b = expr.count('(') - expr.count(')')
-            if open_b > 0:
-                expr += ')' * open_b
+            # Balance brackets
+            op_b = expr.count('(') - expr.count(')')
+            if op_b > 0:
+                expr += ')' * op_b
                 
             res = eval(expr)
-            st.session_state.expression = str(res)
+            st.session_state.calc_val = str(res)
         except Exception:
-            st.session_state.expression = "Error"
+            st.session_state.calc_val = "Error"
     elif val in ["sin", "cos", "tan", "log", "ln", "√"]:
-        st.session_state.expression += f"{val}("
+        st.session_state.calc_val += f"{val}("
     else:
-        st.session_state.expression += str(val)
+        st.session_state.calc_val += str(val)
 
-# Keyboard Input Box for PC typing
-user_typing = st.text_input("Type Expression (PC Keyboard Support):", value=st.session_state.expression, key="text_input_box")
-
-if user_typing != st.session_state.expression:
-    st.session_state.expression = user_typing
-
-# Display Screen
-display_val = st.session_state.expression if st.session_state.expression else "0"
-st.markdown(f'<div class="calc-screen">{display_val}</div>', unsafe_allow_html=True)
+# Screen Output
+display_text = st.session_state.calc_val if st.session_state.calc_val else "0"
+st.markdown(f'<div class="calc-display">{display_text}</div>', unsafe_allow_html=True)
 
 # Calculator Keypad Layout
-buttons_layout = [
+rows = [
     ["C", "⌫", "(", ")"],
     ["sin", "cos", "tan", "÷"],
     ["log", "ln", "√", "^"],
@@ -116,10 +89,10 @@ buttons_layout = [
     ["0", ".", "="]
 ]
 
-# Render Buttons in Grid
-for row in buttons_layout:
+# Render rows properly using columns
+for row in rows:
     cols = st.columns(len(row))
-    for i, btn in enumerate(row):
-        if cols[i].button(btn, key=f"key_{btn}"):
-            handle_click(btn)
+    for i, key in enumerate(row):
+        if cols[i].button(key, key=f"calc_btn_{key}"):
+            press(key)
             st.rerun()
