@@ -1,7 +1,7 @@
 """
-🌸 Cutie Calc  -  Cute Scientific Calculator (Streamlit)
---------------------------------------------------------
-Run:    streamlit run cutie_calculator.py
+Scientific Calculator  -  Navy Edition (Streamlit)
+--------------------------------------------------
+Run:   streamlit run navy_calculator.py
 Needs: streamlit >= 1.39   (pip install -U streamlit)
 """
 
@@ -14,7 +14,7 @@ from decimal import Decimal
 
 import streamlit as st
 
-st.set_page_config(page_title="Cutie Calc", page_icon="🌸", layout="centered")
+st.set_page_config(page_title="Scientific Calculator", page_icon="🧮", layout="centered")
 
 # ════════════════════════════════════════════════════════════════════
 #  1.  SAFE MATH ENGINE
@@ -174,7 +174,7 @@ ALT = {  # action -> (normal, shift)
     "RECIP": ("1/(", "ceil("), "ABS": ("abs(", "floor("),
 }
 _NAMES = ["asinh", "acosh", "atanh", "asin", "acos", "atan", "sinh", "cosh", "tanh",
-         "sin", "cos", "tan", "cbrt", "ceil", "floor", "exp", "abs", "log", "ln"]
+          "sin", "cos", "tan", "cbrt", "ceil", "floor", "exp", "abs", "log", "ln"]
 TOKEN_END = re.compile("(?:(?:" + "|".join(_NAMES) + r")\(|√\(|Ans|mod|×10\^\(|\^\(1/\()$")
 
 
@@ -372,98 +372,95 @@ def press(a: str):
         press_digit(a)
     elif a in ("(", ")"):
         press_bracket(a)
-    else:                                           # + − × ÷ % 
+    else:                                           # + − × ÷ %
         insert(a)
 
 
 # ════════════════════════════════════════════════════════════════════
-#  3.  CUTE LOOK WITH CREAM/SOFT WHITE BORDER HIGHLIGHT
+#  3.  NAVY PROFESSIONAL LOOK
 # ════════════════════════════════════════════════════════════════════
 STYLE = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 html { scroll-behavior:smooth; }
 .stApp {
-  font-family:'Fredoka','Nunito',ui-rounded,'Segoe UI',sans-serif;
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   background:
-    radial-gradient(#ffc9e0 2px, transparent 2.5px) 0 0 / 30px 30px,
-    radial-gradient(circle at 15% 8%, #ffe3f1 0, transparent 40%),
-    radial-gradient(circle at 88% 85%, #e6dcff 0, transparent 45%),
-    #fff4fa;
+    radial-gradient(900px 520px at 50% -8%, #1a3573 0%, transparent 62%),
+    linear-gradient(180deg, #08112a 0%, #050a1a 100%);
 }
 header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"] { display:none; }
 #MainMenu, footer, [data-testid="stStatusWidget"] { visibility:hidden; }
 [data-stale="true"] { opacity:1 !important; transition:none !important; }
 
-/* body + cat ears with Cream / Soft White Highlight Border */
+/* body */
 .block-container {
-  position:relative; max-width:430px; margin:3rem auto 2rem !important;
-  padding:1rem 1rem 1.2rem !important;
-  background:linear-gradient(160deg,#ffd6ea,#ffeaf4 55%,#eadfff);
-  border:4px solid #eae2d0 !important; 
-  border-radius:38px;
-  box-shadow:0 26px 50px rgba(214,120,170,.35), 0 0 30px rgba(234,226,208,0.4), inset 0 -6px 0 rgba(240,150,190,.22);
+  max-width:440px; margin:2rem auto 2rem !important; padding:1.1rem 1.1rem 1.2rem !important;
+  background:linear-gradient(165deg, #14295a 0%, #0e1f47 55%, #0a1634 100%);
+  border:1px solid rgba(234,226,208,.30); border-radius:26px;
+  box-shadow:
+    0 30px 60px rgba(0,0,0,.55),
+    0 0 0 6px rgba(20,41,90,.35),
+    inset 0 1px 0 rgba(255,255,255,.10);
 }
-.block-container::before, .block-container::after {
-  content:""; position:absolute; top:-30px; width:62px; height:62px;
-  background:radial-gradient(circle at 50% 100%, #ff9ec6 0 38%, #ffc3df 40%);
-  border:4px solid #eae2d0; border-bottom:0; border-radius:50% 50% 0 0 / 90% 90% 0 0;
-  clip-path:inset(0 0 34px 0);
-}
-.block-container::before { left:34px; }
-.block-container::after  { right:34px; }
 
-.cute-title { text-align:center; font-weight:600; font-size:1.25rem; color:#d0488a; margin:.1rem 0 .6rem; letter-spacing:.02em; }
-.cute-title small { display:block; font-weight:400; font-size:.72rem; color:#b88aa8; letter-spacing:.08em; }
-
-div[data-testid="stHorizontalBlock"] { flex-wrap:nowrap !important; gap:.4rem !important; }
+/* grid: mobile par bhi wrap na ho */
+div[data-testid="stHorizontalBlock"] { flex-wrap:nowrap !important; gap:.42rem !important; }
 div[data-testid="stColumn"], div[data-testid="column"] { min-width:0 !important; flex:1 1 0 !important; width:auto !important; }
-div[data-testid="stVerticalBlock"] { gap:.4rem; }
+div[data-testid="stVerticalBlock"] { gap:.42rem; }
+.sep { height:1px; margin:.2rem .15rem; background:linear-gradient(90deg, transparent, rgba(143,180,255,.28), transparent); }
 
-/* LCD */
+/* display */
 .lcd {
-  background:linear-gradient(180deg,#fffdff,#f4ecff); color:#5a3d73;
-  border-radius:22px; padding:.5rem 1rem .75rem; margin-bottom:.7rem; min-height:150px;
-  box-shadow:0 0 0 4px #f7b6d3, inset 0 3px 10px rgba(180,150,220,.35);
+  background:linear-gradient(180deg, #060d22 0%, #0a1431 100%);
+  border:1px solid #24407a; border-radius:16px;
+  padding:.55rem 1rem .8rem; margin-bottom:.8rem; min-height:152px;
+  box-shadow:inset 0 2px 14px rgba(0,0,0,.65), 0 0 0 1px rgba(234,226,208,.07);
 }
-.lcd-flags { display:flex; gap:.35rem; height:1.25rem; }
-.lcd-flags span { background:#ffd1e6; color:#a03a70; padding:0 .5rem; border-radius:99px; font-size:.7rem; font-weight:600; line-height:1.25rem; }
-.lcd-in  { text-align:right; min-height:1.9rem; margin-top:.2rem; line-height:1.25; overflow-wrap:anywhere; font-weight:500; color:#9a7ab0; }
-.lcd-res { text-align:right; line-height:1.1; margin-top:.3rem; overflow-wrap:anywhere; font-weight:600; transform-origin:right center; }
-.lcd-res.live { opacity:.45; }
-.lcd-res.err  { color:#e0366f; }
-.lcd-res.pop  { animation:pop .38s cubic-bezier(.34,1.56,.64,1); }
-@keyframes pop { 0% {transform:scale(.8); opacity:0;} 100% {transform:scale(1); opacity:1;} }
+.lcd-flags { display:flex; gap:.35rem; height:1.2rem; }
+.lcd-flags span {
+  background:#16295a; color:#8fb4ff; padding:0 .5rem; border-radius:5px;
+  font-size:.66rem; font-weight:600; letter-spacing:.08em; line-height:1.2rem; text-transform:uppercase;
+}
+.lcd-in  { text-align:right; min-height:1.9rem; margin-top:.25rem; line-height:1.25; overflow-wrap:anywhere;
+           font-family:'JetBrains Mono',ui-monospace,monospace; font-weight:400; color:#7f93c0; }
+.lcd-res { text-align:right; line-height:1.1; margin-top:.35rem; overflow-wrap:anywhere; color:#f4f8ff;
+           font-family:'JetBrains Mono',ui-monospace,monospace; font-weight:700; font-variant-numeric:tabular-nums; }
+.lcd-res.live { opacity:.55; }
+.lcd-res.err  { color:#ff7a8a; font-family:'Inter',sans-serif; font-weight:600; }
+.lcd-res.pop  { animation:rise .28s ease-out; }
+@keyframes rise { from {transform:translateY(8px); opacity:0;} to {transform:translateY(0); opacity:1;} }
 
 /* keys */
 div[class*="st-key-"] button {
-  width:100%; height:2.6rem; padding:0; border:0 !important; border-radius:16px;
+  width:100%; height:2.6rem; padding:0; border:0 !important; border-radius:11px;
   background:var(--bg) !important; color:var(--fg) !important;
-  font-family:'Fredoka',sans-serif; font-size:1rem; font-weight:600; letter-spacing:-.01em;
-  box-shadow:0 4px 0 var(--edge), 0 8px 12px rgba(200,110,160,.22);
-  transition:transform .12s cubic-bezier(.34,1.56,.64,1), box-shadow .12s, filter .2s, background .2s;
+  font-family:'Inter',sans-serif; font-size:.95rem; font-weight:600; letter-spacing:-.01em;
+  box-shadow:0 3px 0 var(--edge), 0 7px 10px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.08);
+  transition:transform .1s ease, box-shadow .1s ease, filter .15s ease, background .15s ease;
 }
 div[class*="st-key-"] button p { color:var(--fg) !important; font-size:inherit; font-weight:inherit; }
-div[class*="st-key-"] button:hover  { filter:brightness(1.05); transform:translateY(-2px); }
-div[class*="st-key-"] button:active { transform:translateY(4px) scale(.97); box-shadow:0 0 0 var(--edge); }
-div[class*="st-key-"] button:focus:not(:active) { outline:3px solid rgba(255,255,255,.9); outline-offset:1px; }
+div[class*="st-key-"] button:hover  { filter:brightness(1.12); transform:translateY(-1px); }
+div[class*="st-key-"] button:active { transform:translateY(3px); box-shadow:0 0 0 var(--edge), inset 0 1px 0 rgba(255,255,255,.05); }
+div[class*="st-key-"] button:focus:not(:active) { outline:2px solid rgba(143,180,255,.75); outline-offset:2px; }
 
-div[class*="st-key-num_"] { --bg:#ffffff; --fg:#7a4a8a; --edge:#f1c9de; }
-div[class*="st-key-fn_"]  { --bg:#e5dbff; --fg:#5b3f9a; --edge:#c3b2f0; }
-div[class*="st-key-ext_"] { --bg:#d3ebff; --fg:#2f5f93; --edge:#a9cff0; }
-div[class*="st-key-op_"]  { --bg:#ffb6d1; --fg:#8a2a55; --edge:#f08db3; }
-div[class*="st-key-mem_"] { --bg:#ccf3e4; --fg:#2d7a60; --edge:#9fddc6; }
-div[class*="st-key-tog_"] { --bg:#fff1b8; --fg:#8a6a00; --edge:#ecd57a; }
-div[class*="st-key-act_"] { --bg:#ff94a8; --fg:#ffffff; --edge:#e0607a; }
-div[class*="st-key-eq_"]  { --bg:#ff6fa8; --fg:#ffffff; --edge:#d63f7f; }
-div[class*="st-key-mem_"] button, div[class*="st-key-tog_"] button { font-size:.88rem; }
+div[class*="st-key-num_"] { --bg:#1f3668; --fg:#f1f5ff; --edge:#0d1b40; }
+div[class*="st-key-fn_"]  { --bg:#152a58; --fg:#a9c4ff; --edge:#0a1633; }
+div[class*="st-key-ext_"] { --bg:#1b3163; --fg:#d3def7; --edge:#0b1838; }
+div[class*="st-key-op_"]  { --bg:#2f62e0; --fg:#ffffff; --edge:#1b3d96; }
+div[class*="st-key-mem_"] { --bg:#0f1e44; --fg:#7f93c0; --edge:#07112b; }
+div[class*="st-key-tog_"] { --bg:#152a58; --fg:#f5c16c; --edge:#0a1633; }
+div[class*="st-key-act_"] { --bg:#d6455a; --fg:#ffffff; --edge:#8e2434; }
+div[class*="st-key-eq_"]  { --bg:#3b82f6; --fg:#ffffff; --edge:#1f56b8; }
+div[class*="st-key-mem_"] button, div[class*="st-key-tog_"] button { font-size:.8rem; letter-spacing:.02em; }
 
 /* history */
-div[data-testid="stExpander"] { background:rgba(255,255,255,.6); border:2px solid #eae2d0 !important; border-radius:18px; margin-top:.3rem; }
+div[data-testid="stExpander"] { background:rgba(255,255,255,.04); border:1px solid #24407a !important; border-radius:14px; margin-top:.4rem; }
 div[data-testid="stExpander"] summary, div[data-testid="stExpander"] p,
-div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#9a5a8d !important; fill:#9a5a8d; }
-div[data-testid="stExpander"] code { background:#ffe3f0; color:#a03a70; }
+div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#9fb4e0 !important; fill:#9fb4e0; }
+div[data-testid="stExpander"] code { background:#14264d; color:#9fc0ff; }
+div[data-testid="stExpander"] strong { color:#f4f8ff; }
 </style>
 """
 
@@ -489,11 +486,11 @@ def lcd_html() -> str:
         res, cls = s.error, " err"
 
     n = len(inp)
-    in_size = 1.4 if n <= 16 else 1.15 if n <= 26 else 0.95
+    in_size = 1.15 if n <= 18 else 0.98 if n <= 28 else 0.85
     m = len(res)
-    res_size = 2.6 if m <= 9 else 2.0 if m <= 14 else 1.5 if m <= 24 else 1.15
+    res_size = 2.3 if m <= 9 else 1.75 if m <= 14 else 1.3 if m <= 24 else 1.0
     if s.error:
-        res_size = 1.3
+        res_size = 1.2
 
     flags = [s.angle] + (["SHIFT"] if s.inv else []) + (["hyp"] if s.hyp else []) \
         + (["M"] if s.mem != 0 else [])
@@ -517,6 +514,7 @@ GRID = [
     [("num", "1"), ("num", "2"), ("num", "3"), ("op", "−"), ("ext", "ANS")],
     [("num", "0"), ("num", "."), ("num", "SIGN"), ("op", "+"), ("eq", "=")],
 ]
+SEPARATE_AFTER = {0, 5}      # in rows ke baad patli line aati hai (memory | science | keypad)
 KEYS = {a: f"{k}_{r}{c}" for r, row in enumerate(GRID) for c, (k, a) in enumerate(row)}
 
 STATIC_LABELS = {
@@ -541,12 +539,13 @@ def label(a: str) -> str:
     return STATIC_LABELS.get(a, a)
 
 
+# ════════════════════════════════════════════════════════════════════
+#  4.  RENDER  (fragment = sirf calculator rerun hota hai => smooth)
+# ════════════════════════════════════════════════════════════════════
 _fragment = getattr(st, "fragment", None) or getattr(st, "experimental_fragment", None) \
     or (lambda f: f)
 
 st.markdown(STYLE, unsafe_allow_html=True)
-st.markdown('<div class="cute-title">🌸 Cutie Calc 🌸<small>SCIENTIFIC CALCULATOR</small></div>',
-            unsafe_allow_html=True)
 
 
 @_fragment
@@ -555,7 +554,7 @@ def calculator():
     active = [KEYS[a] for a, on in (("INV", s.inv), ("HYP", s.hyp)) if on]
     if active:
         rules = "".join(
-            f"div.st-key-{k}{{--bg:#ffd23f !important;--edge:#e0a800 !important;--fg:#5c4400 !important;}}"
+            f"div.st-key-{k}{{--bg:#f5b942 !important;--edge:#b9811c !important;--fg:#1f1500 !important;}}"
             for k in active)
         st.markdown(f"<style>{rules}</style>", unsafe_allow_html=True)
 
@@ -566,15 +565,17 @@ def calculator():
         for c, (kind, action) in enumerate(row):
             cols[c].button(label(action), key=f"{kind}_{r}{c}", on_click=press,
                            args=(action,), use_container_width=True)
+        if r in SEPARATE_AFTER:
+            st.markdown('<div class="sep"></div>', unsafe_allow_html=True)
 
-    with st.expander("🕘 History"):
+    with st.expander("History"):
         if s.history:
             for ex, res in s.history[:15]:
                 st.markdown(f"`{ex}` = **{res}**")
             st.button("Clear history", key="act_clear_hist",
                       on_click=lambda: st.session_state.history.clear())
         else:
-            st.caption("Abhi koi calculation nahi hui 🌷")
+            st.caption("Abhi koi calculation nahi hui.")
 
 
 calculator()
