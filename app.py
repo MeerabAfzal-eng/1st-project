@@ -1,16 +1,20 @@
 """
-Scientific Calculator  -  Soft Blue Edition (Streamlit)
--------------------------------------------------------
-Run:   streamlit run soft_blue_calculator.py
+Scientific Calculator  -  Themed Edition (Streamlit)
+----------------------------------------------------
+Theme: change THEME near section 3  ->  "mint" | "lavender" | "peach" | "sky"
+Run:   streamlit run themed_calculator.py
 Needs: streamlit >= 1.39   (pip install -U streamlit)
+Keyboard: type digits / operators on your keyboard, Enter = equals, Backspace = delete, Esc = clear.
 """
 
 import ast
 import html
+import json
 import math
 import random
 import re
 from decimal import Decimal
+from string import Template
 
 import streamlit as st
 
@@ -377,9 +381,63 @@ def press(a: str):
 
 
 # ════════════════════════════════════════════════════════════════════
-#  3.  SOFT BLUE CUTE LOOK
+#  3.  THEMES + LOOK      ->  change THEME below:  "mint" | "lavender" | "peach" | "sky"
 # ════════════════════════════════════════════════════════════════════
-STYLE = """
+THEME = "mint"
+
+THEMES = {
+    "mint": dict(
+        page=("#eefaf4", "#d3f4e4", "#dcefff"),            # base, blob 1, blob 2
+        body=("#a8e6cf", "#c9f2de", "#e2f8ec"), shadow="40,140,110", sep="60,170,130",
+        ear=("#effcf6", "#7fd6b3"), ink="#1f5f4a", cheek="#ffc2b3",
+        lcd=("#fbfffd", "#e6f8ef"), lcd_ink="#17503f", lcd_dim="#6fa896", lcd_frame="#6fd1a8",
+        flag=("#c9f1e1", "#1f7a5c"),
+        keys=dict(num=("#ffffff", "#1f6650", "#b5e3d0"), fn=("#d4f3e5", "#1b7a5a", "#a4dcc4"),
+                  ext=("#d8ecff", "#2b5f9a", "#a9cdf0"), op=("#3fbf8f", "#ffffff", "#26946d"),
+                  mem=("#fff3c4", "#8a6a00", "#ecd57a"), tog=("#ffe1d6", "#a04a2a", "#efb7a3"),
+                  act=("#ff8f8f", "#ffffff", "#d95c5c"), eq=("#1f9d73", "#ffffff", "#136e50")),
+        hist=("#2f7a62", "#dff5ea", "#17503f"),
+    ),
+    "lavender": dict(
+        page=("#f4efff", "#e4d9ff", "#dfe9ff"),
+        body=("#cdb8ff", "#e0d2ff", "#f1e8ff"), shadow="100,70,200", sep="130,100,220",
+        ear=("#f6f1ff", "#a98cf0"), ink="#4a3290", cheek="#ffc2d9",
+        lcd=("#fdfbff", "#efe8ff"), lcd_ink="#3b2a80", lcd_dim="#9a88cf", lcd_frame="#a98cf0",
+        flag=("#e3d8ff", "#5a3fc0"),
+        keys=dict(num=("#ffffff", "#4a3290", "#d9cdf5"), fn=("#e6dcff", "#5a3fc0", "#c7b6f2"),
+                  ext=("#dbe6ff", "#2f5aa0", "#b2c8f0"), op=("#9a78f5", "#ffffff", "#6c4fd0"),
+                  mem=("#d6f5ea", "#23705a", "#a6dcc8"), tog=("#fff0b8", "#8a6500", "#ecd57a"),
+                  act=("#ff94b0", "#ffffff", "#e0607f"), eq=("#6d4ae0", "#ffffff", "#4529a8")),
+        hist=("#5a3fc0", "#ece4ff", "#3b2a80"),
+    ),
+    "peach": dict(
+        page=("#fff6ee", "#ffe6d2", "#fff0c9"),
+        body=("#ffc9a8", "#ffdcc5", "#ffeede"), shadow="210,120,70", sep="230,150,100",
+        ear=("#fff4ea", "#ffa77a"), ink="#7a3b1d", cheek="#ff9f9f",
+        lcd=("#fffdfb", "#fff0e4"), lcd_ink="#6b3418", lcd_dim="#c49a82", lcd_frame="#ffa77a",
+        flag=("#ffe0cc", "#b4521f"),
+        keys=dict(num=("#ffffff", "#7a3b1d", "#f3d2bd"), fn=("#ffe3d0", "#b4521f", "#f0bf9f"),
+                  ext=("#fff1c9", "#8a6500", "#ecd48a"), op=("#ff9a62", "#ffffff", "#e0743a"),
+                  mem=("#d6f5ea", "#23705a", "#a6dcc8"), tog=("#e1ecff", "#2f5a9a", "#adc4ee"),
+                  act=("#ff7f8f", "#ffffff", "#d95468"), eq=("#e8561f", "#ffffff", "#a83a10")),
+        hist=("#b4521f", "#ffe9da", "#6b3418"),
+    ),
+    "sky": dict(
+        page=("#eaf1ff", "#d9e6ff", "#e5dcff"),
+        body=("#a9c6ff", "#c6d8ff", "#dcd2ff"), shadow="60,90,190", sep="70,105,210",
+        ear=("#eef3ff", "#8fb0ff"), ink="#26408f", cheek="#ffb8cb",
+        lcd=("#fbfdff", "#e9f0ff"), lcd_ink="#1f3a8a", lcd_dim="#7f95d0", lcd_frame="#7fa2ff",
+        flag=("#cfe0ff", "#2a4bb3"),
+        keys=dict(num=("#ffffff", "#2a4590", "#b4c7f3"), fn=("#d9e4ff", "#2a4bb3", "#a9bcf0"),
+                  ext=("#cdeaff", "#1f5f9a", "#9ccbee"), op=("#6f9bff", "#ffffff", "#3f6fe0"),
+                  mem=("#c9f1e4", "#23705a", "#98d7c1"), tog=("#fff0b8", "#8a6500", "#ecd57a"),
+                  act=("#ff94a6", "#ffffff", "#e0607a"), eq=("#2f55d4", "#ffffff", "#1c3a99")),
+        hist=("#3b5bb5", "#e1ebff", "#1f3a8a"),
+    ),
+}
+ON_BG, ON_EDGE, ON_FG = "#ffd23f", "#e0a800", "#5c4400"      # active SHIFT / hyp key
+
+STYLE_TEMPLATE = Template("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
 
@@ -388,9 +446,9 @@ html { scroll-behavior:smooth; }
   font-family:'Fredoka','Nunito',ui-rounded,'Segoe UI',sans-serif;
   background:
     radial-gradient(#ffffff 2px, transparent 2.6px) 0 0 / 30px 30px,
-    radial-gradient(circle at 12% 10%, #d9e6ff 0, transparent 42%),
-    radial-gradient(circle at 90% 88%, #e5dcff 0, transparent 46%),
-    #eaf1ff;
+    radial-gradient(circle at 12% 10%, ${page1} 0, transparent 42%),
+    radial-gradient(circle at 90% 88%, ${page2} 0, transparent 46%),
+    ${page0};
 }
 header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"] { display:none; }
 #MainMenu, footer, [data-testid="stStatusWidget"] { visibility:hidden; }
@@ -400,13 +458,13 @@ header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecor
 .block-container {
   position:relative; max-width:440px; margin:3.4rem auto 2rem !important;
   padding:1rem 1.05rem 1.2rem !important;
-  background:linear-gradient(160deg, #a9c6ff 0%, #c6d8ff 45%, #dcd2ff 100%);
+  background:linear-gradient(160deg, ${body0} 0%, ${body1} 45%, ${body2} 100%);
   border:4px solid #fff; border-radius:42px;
-  box-shadow:0 26px 50px rgba(60,90,190,.32), inset 0 -7px 0 rgba(80,115,225,.20);
+  box-shadow:0 26px 50px rgba(${shadow},.32), inset 0 -7px 0 rgba(${shadow},.20);
 }
 .block-container::before, .block-container::after {
   content:""; position:absolute; top:-36px; width:76px; height:72px;
-  background:radial-gradient(circle at 50% 100%, #eef3ff 0 34%, #8fb0ff 36%);
+  background:radial-gradient(circle at 50% 100%, ${ear0} 0 34%, ${ear1} 36%);
   border:4px solid #fff; border-bottom:0; border-radius:50% 50% 0 0 / 100% 100% 0 0;
   clip-path:inset(0 0 36px 0);
 }
@@ -415,25 +473,25 @@ header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecor
 
 /* small cute face */
 .face { display:flex; justify-content:center; align-items:center; gap:.5rem; height:1.5rem; margin:-.15rem 0 .5rem; }
-.face .eye   { width:.55rem; height:.55rem; border-radius:50%; background:#26408f; }
-.face .mouth { width:.85rem; height:.42rem; border-bottom:3px solid #26408f; border-radius:0 0 1rem 1rem; }
-.face .cheek { width:.95rem; height:.55rem; border-radius:50%; background:#ffb8cb; opacity:.85; }
+.face .eye   { width:.55rem; height:.55rem; border-radius:50%; background:${ink}; }
+.face .mouth { width:.85rem; height:.42rem; border-bottom:3px solid ${ink}; border-radius:0 0 1rem 1rem; }
+.face .cheek { width:.95rem; height:.55rem; border-radius:50%; background:${cheek}; opacity:.85; }
 
 /* keep the grid on one row even on mobile */
 div[data-testid="stHorizontalBlock"] { flex-wrap:nowrap !important; gap:.42rem !important; }
 div[data-testid="stColumn"], div[data-testid="column"] { min-width:0 !important; flex:1 1 0 !important; width:auto !important; }
 div[data-testid="stVerticalBlock"] { gap:.42rem; }
-.sep { height:0; margin:.3rem .5rem; border-top:3px dotted rgba(70,105,210,.30); }
+.sep { height:0; margin:.3rem .5rem; border-top:3px dotted rgba(${sep},.30); }
 
 /* display */
 .lcd {
-  background:linear-gradient(180deg,#fbfdff,#e9f0ff); color:#1f3a8a;
+  background:linear-gradient(180deg, ${lcd0}, ${lcd1}); color:${lcd_ink};
   border-radius:24px; padding:.55rem 1rem .8rem; margin-bottom:.8rem; min-height:150px;
-  box-shadow:0 0 0 4px #7fa2ff, 0 0 0 7px #fff, inset 0 3px 10px rgba(80,115,225,.28);
+  box-shadow:0 0 0 4px ${lcd_frame}, 0 0 0 7px #fff, inset 0 3px 10px rgba(${shadow},.28);
 }
 .lcd-flags { display:flex; gap:.35rem; height:1.25rem; }
-.lcd-flags span { background:#cfe0ff; color:#2a4bb3; padding:0 .55rem; border-radius:99px; font-size:.7rem; font-weight:600; line-height:1.25rem; }
-.lcd-in  { text-align:right; min-height:1.9rem; margin-top:.2rem; line-height:1.25; overflow-wrap:anywhere; font-weight:500; color:#7f95d0; }
+.lcd-flags span { background:${flag0}; color:${flag1}; padding:0 .55rem; border-radius:99px; font-size:.7rem; font-weight:600; line-height:1.25rem; }
+.lcd-in  { text-align:right; min-height:1.9rem; margin-top:.2rem; line-height:1.25; overflow-wrap:anywhere; font-weight:500; color:${lcd_dim}; }
 .lcd-res { text-align:right; line-height:1.1; margin-top:.3rem; overflow-wrap:anywhere; font-weight:600; transform-origin:right center; }
 .lcd-res.live { opacity:.5; }
 .lcd-res.err  { color:#e0436b; }
@@ -445,32 +503,54 @@ div[class*="st-key-"] button {
   width:100%; height:2.65rem; padding:0; border:0 !important; border-radius:16px;
   background:var(--bg) !important; color:var(--fg) !important;
   font-family:'Fredoka',sans-serif; font-size:1.02rem; font-weight:600; letter-spacing:-.01em;
-  box-shadow:0 4px 0 var(--edge), 0 9px 14px rgba(60,90,190,.20);
+  box-shadow:0 4px 0 var(--edge), 0 9px 14px rgba(${shadow},.20);
   transition:transform .12s cubic-bezier(.34,1.56,.64,1), box-shadow .12s, filter .2s, background .2s;
 }
 div[class*="st-key-"] button p { color:var(--fg) !important; font-size:inherit; font-weight:inherit; }
 div[class*="st-key-"] button:hover  { filter:brightness(1.05); transform:translateY(-2px); }
 div[class*="st-key-"] button:active { transform:translateY(4px) scale(.97); box-shadow:0 0 0 var(--edge); }
 div[class*="st-key-"] button:focus:not(:active) { outline:3px solid rgba(255,255,255,.95); outline-offset:1px; }
-
-div[class*="st-key-num_"] { --bg:#ffffff; --fg:#2a4590; --edge:#b4c7f3; }
-div[class*="st-key-fn_"]  { --bg:#d9e4ff; --fg:#2a4bb3; --edge:#a9bcf0; }
-div[class*="st-key-ext_"] { --bg:#cdeaff; --fg:#1f5f9a; --edge:#9ccbee; }
-div[class*="st-key-op_"]  { --bg:#6f9bff; --fg:#ffffff; --edge:#3f6fe0; }
-div[class*="st-key-mem_"] { --bg:#c9f1e4; --fg:#23705a; --edge:#98d7c1; }
-div[class*="st-key-tog_"] { --bg:#fff0b8; --fg:#8a6500; --edge:#ecd57a; }
-div[class*="st-key-act_"] { --bg:#ff94a6; --fg:#ffffff; --edge:#e0607a; }
-div[class*="st-key-eq_"]  { --bg:#2f55d4; --fg:#ffffff; --edge:#1c3a99; }
+${key_rules}
 div[class*="st-key-mem_"] button, div[class*="st-key-tog_"] button { font-size:.88rem; }
 
 /* history */
 div[data-testid="stExpander"] { background:rgba(255,255,255,.65); border:2px solid #fff !important; border-radius:18px; margin-top:.4rem; }
 div[data-testid="stExpander"] summary, div[data-testid="stExpander"] p,
-div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#3b5bb5 !important; fill:#3b5bb5; }
-div[data-testid="stExpander"] code { background:#e1ebff; color:#2a4bb3; }
-div[data-testid="stExpander"] strong { color:#1f3a8a; }
+div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:${hist0} !important; fill:${hist0}; }
+div[data-testid="stExpander"] code { background:${hist1}; color:${hist0}; }
+div[data-testid="stExpander"] strong { color:${hist2}; }
+
+/* key flash when triggered from the physical keyboard */
+div[class*="st-key-"].kb-press button { transform:translateY(4px) scale(.97) !important; box-shadow:0 0 0 var(--edge) !important; filter:brightness(1.08); }
+
+/* hide the empty helper elements that carry the keyboard script */
+div[data-testid="stElementContainer"]:has(iframe[height="0"]),
+.element-container:has(iframe[height="0"]),
+div[data-testid="stElementContainer"]:has(> div[data-testid="stHtml"]),
+.element-container:has(> div[data-testid="stHtml"]) {
+  position:absolute; height:0; min-height:0; margin:0; padding:0; overflow:hidden; opacity:0; pointer-events:none;
+}
 </style>
-"""
+""")
+
+
+def build_style(name: str) -> str:
+    t = THEMES.get(name, THEMES["mint"])
+    key_rules = "\n".join(
+        f'div[class*="st-key-{kind}_"] {{ --bg:{bg}; --fg:{fg}; --edge:{edge}; }}'
+        for kind, (bg, fg, edge) in t["keys"].items())
+    return STYLE_TEMPLATE.substitute(
+        page0=t["page"][0], page1=t["page"][1], page2=t["page"][2],
+        body0=t["body"][0], body1=t["body"][1], body2=t["body"][2],
+        shadow=t["shadow"], sep=t["sep"], ear0=t["ear"][0], ear1=t["ear"][1],
+        ink=t["ink"], cheek=t["cheek"], lcd0=t["lcd"][0], lcd1=t["lcd"][1],
+        lcd_ink=t["lcd_ink"], lcd_dim=t["lcd_dim"], lcd_frame=t["lcd_frame"],
+        flag0=t["flag"][0], flag1=t["flag"][1], key_rules=key_rules,
+        hist0=t["hist"][0], hist1=t["hist"][1], hist2=t["hist"][2])
+
+
+STYLE = build_style(THEME)
+
 
 
 def lcd_html() -> str:
@@ -564,7 +644,7 @@ def calculator():
     active = [KEYS[a] for a, on in (("INV", s.inv), ("HYP", s.hyp)) if on]
     if active:
         rules = "".join(
-            f"div.st-key-{k}{{--bg:#ffd23f !important;--edge:#e0a800 !important;--fg:#5c4400 !important;}}"
+            f"div.st-key-{k}{{--bg:{ON_BG} !important;--edge:{ON_EDGE} !important;--fg:{ON_FG} !important;}}"
             for k in active)
         st.markdown(f"<style>{rules}</style>", unsafe_allow_html=True)
 
@@ -585,7 +665,105 @@ def calculator():
             st.button("Clear history", key="act_clear_hist",
                       on_click=lambda: st.session_state.history.clear())
         else:
-            st.caption("No calculations yet")
+            st.caption("No calculations yet ✨")
 
 
 calculator()
+
+
+# ════════════════════════════════════════════════════════════════════
+#  5.  PHYSICAL KEYBOARD SUPPORT
+# ════════════════════════════════════════════════════════════════════
+# KeyboardEvent.key  ->  calculator action (same names as in GRID)
+KEYBOARD = {
+    **{d: d for d in "0123456789"},
+    ".": ".", ",": ".",
+    "+": "+", "-": "−", "*": "×", "x": "×", "/": "÷",
+    "Enter": "=", "=": "=",
+    "Backspace": "DEL", "Escape": "AC", "Delete": "AC",
+    "(": "(", ")": ")", "%": "%", "^": "POW", "!": "FACT",
+    "p": "PI", "e": "E",
+    "s": "SIN", "c": "COS", "t": "TAN",
+    "l": "LN", "g": "LOG", "r": "SQRT",
+    "a": "ANS", "m": "MOD",
+    "h": "HYP", "i": "INV", "d": "ANGLE",
+}
+
+# Browser-side code. It installs ONE key listener on the main Streamlit page and
+# "clicks" the matching on-screen button, so the display, history and mode flags
+# update exactly as if the button had been pressed with the mouse.
+#  * If this script runs inside an iframe, the listener is copied into the parent
+#    page (so it keeps working after Streamlit reruns and removes the iframe).
+#  * The listener runs in the capture phase and stops the event, so Streamlit's own
+#    shortcuts (r = rerun, c = clear cache) cannot hijack the calculator keys.
+KEYBOARD_JS = """
+(function () {
+  function install(win) {
+    var doc = win.document;
+    win.__calcKeyMap = __MAP__;                    // always refresh the key map
+    if (win.__calcKeysBound) return;               // attach the listener only once
+    win.__calcKeysBound = true;
+
+    win.addEventListener('keydown', function (ev) {
+      if (ev.ctrlKey || ev.metaKey || ev.altKey) return;     // keep Ctrl+C, Ctrl+R ... working
+      var t = ev.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' ||
+                t.tagName === 'SELECT' || t.isContentEditable)) return;
+      if (t && t.tagName === 'SUMMARY' && ev.key === 'Enter') return;   // let the expander toggle
+
+      var key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
+      var cls = win.__calcKeyMap[key];
+      if (!cls) return;
+
+      var holder = doc.querySelector('.st-key-' + cls);
+      var btn = holder && holder.querySelector('button');
+      if (!btn) return;
+
+      ev.preventDefault();                         // a focused button must not fire twice
+      ev.stopImmediatePropagation();               // block Streamlit's own hotkeys
+      btn.click();
+      holder.classList.add('kb-press');
+      setTimeout(function () { holder.classList.remove('kb-press'); }, 130);
+    }, true);
+    if (win.console) console.log('[calculator] keyboard input ready');
+  }
+
+  var target = window;
+  try {
+    if (window.parent && window.parent !== window) {
+      void window.parent.document;                 // throws if not accessible
+      target = window.parent;
+    }
+  } catch (e) { target = window; }
+
+  if (target === window) { install(window); return; }
+
+  // inside an iframe: run the listener in the parent page's own context
+  var s = target.document.createElement('script');
+  s.textContent = '(' + install.toString() + ')(window);';
+  target.document.head.appendChild(s);
+  target.document.head.removeChild(s);
+})();
+"""
+
+
+def inject_js(js: str):
+    """Run JavaScript in the page. Tries every method Streamlit has offered;
+    the JS guards itself, so it is safe if more than one of them works."""
+    tag = f"<script>{js}</script>"
+    try:                                           # classic way (Streamlit 1.x)
+        import streamlit.components.v1 as components
+        components.html(tag, height=0)
+    except Exception:
+        pass
+    try:                                           # newer Streamlit: st.html can run scripts
+        st.html(tag, unsafe_allow_javascript=True)
+    except Exception:
+        pass
+    try:                                           # newest replacement for components.html
+        st.iframe(tag, height=0)
+    except Exception:
+        pass
+
+
+inject_js(KEYBOARD_JS.replace("__MAP__", json.dumps({k: KEYS[a] for k, a in KEYBOARD.items()})))
