@@ -1,14 +1,12 @@
 """
 Scientific Calculator  -  Soft Blue Edition (Streamlit)
 -------------------------------------------------------
-Run:   streamlit run soft_blue_calculator.py
+Run:    streamlit run soft_blue_calculator.py
 Needs: streamlit >= 1.39   (pip install -U streamlit)
-Keyboard: type digits / operators on your keyboard, Enter = equals, Backspace = delete, Esc = clear.
 """
 
 import ast
 import html
-import json
 import math
 import random
 import re
@@ -97,16 +95,16 @@ def prepare(expr: str, ans: float, angle: str) -> str:
     """Display expression -> Python expression."""
     s = expr.replace("mod", "§")
     s = (s.replace("×", "*").replace("÷", "/").replace("−", "-")
-          .replace("π", "pi").replace("√", "sqrt").replace("^", "**"))
+         .replace("π", "pi").replace("√", "sqrt").replace("^", "**"))
     s = s.replace("°", {"DEG": "", "RAD": "*(pi/180)", "GRAD": "*(10/9)"}[angle])
     s = s.replace("Ans", "(" + format(Decimal(repr(float(ans))), "f") + ")")
     s = re.sub(r"(\d+)P(\d+)", r"perm(\1,\2)", s)                # 5P2
     s = re.sub(r"(\d+)C(\d+)", r"comb(\1,\2)", s)                # 5C2
-    s = re.sub(r"(\d+(?:\.\d+)?)!", r"fact(\1)", s)              # 5!
-    s = re.sub(r"(\d+(?:\.\d+)?)%", r"(\1/100)", s)              # 50%
-    s = re.sub(r"\b(pi|e)(?=[\d(])", r"\1*", s)                  # pi( -> pi*(
+    s = re.sub(r"(\d+(?:\.\d+)?)!", r"fact(\1)", s)             # 5!
+    s = re.sub(r"(\d+(?:\.\d+)?)%", r"(\1/100)", s)             # 50%
+    s = re.sub(r"\b(pi|e)(?=[\d(])", r"\1*", s)                # pi( -> pi*(
     s = re.sub(r"(?<=[\d)])(?=[A-Za-z(])", "*", s)               # 2sin( / 3( / )(
-    s = re.sub(r"(?<=\))(?=\d)", "*", s)                         # )5
+    s = re.sub(r"(?<=\))(?=\d)", "*", s)                        # )5
     return s.replace("§", "%")
 
 
@@ -183,7 +181,7 @@ TOKEN_END = re.compile("(?:(?:" + "|".join(_NAMES) + r")\(|√\(|Ans|mod|×10\^\
 def insert(t: str):
     s = st.session_state
     binary, postfix = t in BIN_TOKENS, t in POSTFIX
-    if s.fresh:                                     # after '=', a new number starts a fresh expression
+    if s.fresh:                                       # after '=', a new number starts a fresh expression
         if not (binary or postfix):
             s.expr = ""
         s.fresh = False
@@ -374,12 +372,33 @@ def press(a: str):
         press_digit(a)
     elif a in ("(", ")"):
         press_bracket(a)
-    else:                                           # + − × ÷ %
+    else:                                               # + − × ÷ %
         insert(a)
 
 
 # ════════════════════════════════════════════════════════════════════
-#  3.  SOFT BLUE CUTE LOOK
+#  3.  CALLBACK FOR KEYBOARD INPUT
+# ════════════════════════════════════════════════════════════════════
+def handle_keyboard_input():
+    val = st.session_state.get("kb_input", "")
+    if not val:
+        return
+    for ch in val:
+        if ch.isdigit():
+            press_digit(ch)
+        elif ch == ".":
+            press_dot()
+        elif ch in ("+", "-j", "*", "/", "%", "(", ")"):
+            op_map = {"-j": "−", "*": "×", "/": "÷"}
+            press(op_map.get(ch, ch))
+        elif ch == "=":
+            press_equal()
+    # Reset text input field after processing
+    st.session_state["kb_input"] = ""
+
+
+# ════════════════════════════════════════════════════════════════════
+#  4.  SOFT BLUE CUTE LOOK
 # ════════════════════════════════════════════════════════════════════
 STYLE = """
 <style>
@@ -471,9 +490,6 @@ div[data-testid="stExpander"] summary, div[data-testid="stExpander"] p,
 div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#3b5bb5 !important; fill:#3b5bb5; }
 div[data-testid="stExpander"] code { background:#e1ebff; color:#2a4bb3; }
 div[data-testid="stExpander"] strong { color:#1f3a8a; }
-/* key flash when triggered from the physical keyboard */
-div[class*="st-key-"].kb-press button { transform:translateY(4px) scale(.97) !important; box-shadow:0 0 0 var(--edge) !important; filter:brightness(1.08); }
-
 </style>
 """
 
@@ -482,9 +498,9 @@ def lcd_html() -> str:
     """Top line: input.  Bottom line: answer / live result."""
     s = st.session_state
 
-    if s.fresh:                                     # after '=' was pressed
+    if s.fresh:                                       # after '=' was pressed
         inp, res, cls = s.top, s.expr, " pop"
-    else:                                           # while typing
+    else:                                               # while typing
         inp, res, cls = s.expr, "", " live"
         if s.expr and not re.fullmatch(r"[\d.]+", s.expr):
             try:
@@ -527,7 +543,7 @@ GRID = [
     [("num", "1"), ("num", "2"), ("num", "3"), ("op", "−"), ("ext", "ANS")],
     [("num", "0"), ("num", "."), ("num", "SIGN"), ("op", "+"), ("eq", "=")],
 ]
-SEPARATE_AFTER = {0, 5}      # a thin divider is drawn after these rows (memory | science | keypad)
+SEPARATE_AFTER = {0, 5}     # a thin divider is drawn after these rows (memory | science | keypad)
 KEYS = {a: f"{k}_{r}{c}" for r, row in enumerate(GRID) for c, (k, a) in enumerate(row)}
 
 STATIC_LABELS = {
@@ -553,7 +569,7 @@ def label(a: str) -> str:
 
 
 # ════════════════════════════════════════════════════════════════════
-#  4.  RENDER  (fragment = only the calculator reruns => smoother)
+#  5.  RENDER  (fragment = only the calculator reruns => smoother)
 # ════════════════════════════════════════════════════════════════════
 _fragment = getattr(st, "fragment", None) or getattr(st, "experimental_fragment", None) \
     or (lambda f: f)
@@ -566,6 +582,10 @@ st.markdown('<div class="face"><i class="cheek"></i><i class="eye"></i><i class=
 @_fragment
 def calculator():
     s = st.session_state
+    
+    # Hidden text input for keyboard typing support
+    st.text_input("Type numbers here:", key="kb_input", on_change=handle_keyboard_input, label_visibility="collapsed")
+
     active = [KEYS[a] for a, on in (("INV", s.inv), ("HYP", s.hyp)) if on]
     if active:
         rules = "".join(
@@ -590,79 +610,7 @@ def calculator():
             st.button("Clear history", key="act_clear_hist",
                       on_click=lambda: st.session_state.history.clear())
         else:
-            st.caption("No calculations yet ✨")
+            st.caption("No calculations yet")
 
 
 calculator()
-
-
-# ════════════════════════════════════════════════════════════════════
-#  5.  PHYSICAL KEYBOARD SUPPORT
-# ════════════════════════════════════════════════════════════════════
-# KeyboardEvent.key  ->  calculator action (same names as in GRID)
-KEYBOARD = {
-    **{d: d for d in "0123456789"},
-    ".": ".", ",": ".",
-    "+": "+", "-": "−", "*": "×", "x": "×", "/": "÷",
-    "Enter": "=", "=": "=",
-    "Backspace": "DEL", "Escape": "AC", "Delete": "AC",
-    "(": "(", ")": ")", "%": "%", "^": "POW", "!": "FACT",
-    "p": "PI", "e": "E",
-    "s": "SIN", "c": "COS", "t": "TAN",
-    "l": "LN", "g": "LOG", "r": "SQRT",
-    "a": "ANS", "m": "MOD",
-    "h": "HYP", "i": "INV", "d": "ANGLE",
-}
-
-# Listens for key presses on the whole page and "clicks" the matching on-screen
-# button, so the display, history and every mode flag update exactly as if the
-# button had been pressed with the mouse.
-KEYBOARD_JS = """
-(function () {
-  const root = (window.parent && window.parent !== window) ? window.parent : window;
-  const doc = root.document;
-  root.__calcKeyMap = __MAP__;            // always refresh the map
-  if (root.__calcKeysBound) return;       // attach the listener only once
-  root.__calcKeysBound = true;
-
-  doc.addEventListener('keydown', function (ev) {
-    if (ev.ctrlKey || ev.metaKey || ev.altKey) return;          // keep Ctrl+C, Ctrl+R ... working
-    const t = ev.target;
-    if (t && (['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName) || t.isContentEditable)) return;
-    if (t && t.tagName === 'SUMMARY' && ev.key === 'Enter') return;   // let the expander toggle
-
-    const key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
-    const cls = root.__calcKeyMap[key];
-    if (!cls) return;
-
-    const holder = doc.querySelector('.st-key-' + cls);
-    const btn = holder && holder.querySelector('button');
-    if (!btn) return;
-
-    ev.preventDefault();                                        // stops a focused button from firing twice
-    btn.click();
-    holder.classList.add('kb-press');
-    setTimeout(function () { holder.classList.remove('kb-press'); }, 130);
-  });
-})();
-"""
-
-
-def inject_js(js: str):
-    """Run JavaScript in the page (works across Streamlit versions)."""
-    tag = f"<script>{js}</script>"
-    try:                                           # newer Streamlit: st.html can run scripts
-        st.html(tag, unsafe_allow_javascript=True)
-        return
-    except Exception:
-        pass
-    try:                                           # replacement for components.html
-        st.iframe(tag, height=0)
-        return
-    except Exception:
-        pass
-    import streamlit.components.v1 as components   # older Streamlit
-    components.html(tag, height=0)
-
-
-inject_js(KEYBOARD_JS.replace("__MAP__", json.dumps({k: KEYS[a] for k, a in KEYBOARD.items()})))
