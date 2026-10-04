@@ -3,10 +3,12 @@ Scientific Calculator  -  Soft Blue Edition (Streamlit)
 -------------------------------------------------------
 Run:   streamlit run soft_blue_calculator.py
 Needs: streamlit >= 1.39   (pip install -U streamlit)
+Keyboard: type digits / operators on your keyboard, Enter = equals, Backspace = delete, Esc = clear.
 """
 
 import ast
 import html
+import json
 import math
 import random
 import re
@@ -469,6 +471,12 @@ div[data-testid="stExpander"] summary, div[data-testid="stExpander"] p,
 div[data-testid="stExpander"] span, div[data-testid="stExpander"] svg { color:#3b5bb5 !important; fill:#3b5bb5; }
 div[data-testid="stExpander"] code { background:#e1ebff; color:#2a4bb3; }
 div[data-testid="stExpander"] strong { color:#1f3a8a; }
+/* key flash when triggered from the physical keyboard */
+div[class*="st-key-"].kb-press button { transform:translateY(4px) scale(.97) !important; box-shadow:0 0 0 var(--edge) !important; filter:brightness(1.08); }
+
+/* shortcuts table */
+div[data-testid="stExpander"] table { width:100%; font-size:.85rem; }
+div[data-testid="stExpander"] th, div[data-testid="stExpander"] td { color:inherit !important; padding:.2rem .4rem; border-color:rgba(120,140,200,.25) !important; }
 </style>
 """
 
@@ -585,7 +593,95 @@ def calculator():
             st.button("Clear history", key="act_clear_hist",
                       on_click=lambda: st.session_state.history.clear())
         else:
-            st.caption("No calculations yet")
+            st.caption("No calculations yet ✨")
 
 
 calculator()
+
+
+# ════════════════════════════════════════════════════════════════════
+#  5.  PHYSICAL KEYBOARD SUPPORT
+# ════════════════════════════════════════════════════════════════════
+# KeyboardEvent.key  ->  calculator action (same names as in GRID)
+KEYBOARD = {
+    **{d: d for d in "0123456789"},
+    ".": ".", ",": ".",
+    "+": "+", "-": "−", "*": "×", "x": "×", "/": "÷",
+    "Enter": "=", "=": "=",
+    "Backspace": "DEL", "Escape": "AC", "Delete": "AC",
+    "(": "(", ")": ")", "%": "%", "^": "POW", "!": "FACT",
+    "p": "PI", "e": "E",
+    "s": "SIN", "c": "COS", "t": "TAN",
+    "l": "LN", "g": "LOG", "r": "SQRT",
+    "a": "ANS", "m": "MOD",
+    "h": "HYP", "i": "INV", "d": "ANGLE",
+}
+
+# Listens for key presses on the whole page and "clicks" the matching on-screen
+# button, so the display, history and every mode flag update exactly as if the
+# button had been pressed with the mouse.
+KEYBOARD_JS = """
+(function () {
+  const root = (window.parent && window.parent !== window) ? window.parent : window;
+  const doc = root.document;
+  root.__calcKeyMap = __MAP__;            // always refresh the map
+  if (root.__calcKeysBound) return;       // attach the listener only once
+  root.__calcKeysBound = true;
+
+  doc.addEventListener('keydown', function (ev) {
+    if (ev.ctrlKey || ev.metaKey || ev.altKey) return;          // keep Ctrl+C, Ctrl+R ... working
+    const t = ev.target;
+    if (t && (['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName) || t.isContentEditable)) return;
+    if (t && t.tagName === 'SUMMARY' && ev.key === 'Enter') return;   // let the expander toggle
+
+    const key = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
+    const cls = root.__calcKeyMap[key];
+    if (!cls) return;
+
+    const holder = doc.querySelector('.st-key-' + cls);
+    const btn = holder && holder.querySelector('button');
+    if (!btn) return;
+
+    ev.preventDefault();                                        // stops a focused button from firing twice
+    btn.click();
+    holder.classList.add('kb-press');
+    setTimeout(function () { holder.classList.remove('kb-press'); }, 130);
+  });
+})();
+"""
+
+
+def inject_js(js: str):
+    """Run JavaScript in the page (works across Streamlit versions)."""
+    tag = f"<script>{js}</script>"
+    try:                                           # newer Streamlit: st.html can run scripts
+        st.html(tag, unsafe_allow_javascript=True)
+        return
+    except Exception:
+        pass
+    try:                                           # replacement for components.html
+        st.iframe(tag, height=0)
+        return
+    except Exception:
+        pass
+    import streamlit.components.v1 as components   # older Streamlit
+    components.html(tag, height=0)
+
+
+with st.expander("⌨️ Keyboard shortcuts"):
+    st.markdown(
+        "| Key | Action |\n|---|---|\n"
+        "| `0-9` `.` | Digits and decimal point |\n"
+        "| `+` `-` `*` `/` | Add, subtract, multiply, divide |\n"
+        "| `Enter` or `=` | Equals |\n"
+        "| `Backspace` | Delete last entry |\n"
+        "| `Esc` or `Delete` | Clear all (AC) |\n"
+        "| `(` `)` `%` `^` `!` | Brackets, percent, power, factorial |\n"
+        "| `s` `c` `t` | sin, cos, tan |\n"
+        "| `l` `g` `r` | ln, log, square root |\n"
+        "| `p` `e` | π and e |\n"
+        "| `a` `m` | Ans, mod |\n"
+        "| `h` `i` `d` | hyp, SHIFT, DEG/RAD/GRAD |"
+    )
+
+inject_js(KEYBOARD_JS.replace("__MAP__", json.dumps({k: KEYS[a] for k, a in KEYBOARD.items()})))
