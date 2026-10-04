@@ -13,6 +13,7 @@ import re
 from decimal import Decimal
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Scientific Calculator", page_icon="🧮", layout="centered")
 
@@ -560,6 +561,80 @@ st.markdown('<div class="face"><i class="cheek"></i><i class="eye"></i><i class=
 
 @_fragment
 def calculator():
+
+    # ════════════════════════════════════════════════════════════════════
+    # PHYSICAL KEYBOARD SUPPORT
+    # ════════════════════════════════════════════════════════════════════
+    components.html("""
+    <script>
+    (() => {
+        const parentWindow = window.parent;
+
+        // Prevent duplicate listeners when Streamlit reruns the app.
+        if (parentWindow.__scientificCalculatorKeyboardInstalled) {
+            return;
+        }
+        parentWindow.__scientificCalculatorKeyboardInstalled = true;
+
+        parentWindow.document.addEventListener("keydown", function(event) {
+            // Keep browser shortcuts working.
+            if (event.ctrlKey || event.altKey || event.metaKey) {
+                return;
+            }
+
+            const target = event.target;
+            if (target && (
+                target.tagName === "INPUT" ||
+                target.tagName === "TEXTAREA" ||
+                target.isContentEditable
+            )) {
+                return;
+            }
+
+            const key = event.key;
+            let buttonText = null;
+
+            // Numbers and decimal point
+            if (/^[0-9]$/.test(key)) buttonText = key;
+            else if (key === ".") buttonText = ".";
+
+            // Basic operators
+            else if (key === "+") buttonText = "+";
+            else if (key === "-") buttonText = "−";
+            else if (key === "*") buttonText = "×";
+            else if (key === "/") buttonText = "÷";
+
+            // Extra calculator keys
+            else if (key === "%") buttonText = "%";
+            else if (key === "(") buttonText = "(";
+            else if (key === ")") buttonText = ")";
+            else if (key === "^") buttonText = "xʸ";
+
+            // Enter / =
+            else if (key === "Enter" || key === "=") buttonText = "=";
+
+            // Backspace / Delete
+            else if (key === "Backspace" || key === "Delete") buttonText = "⌫";
+
+            // Escape
+            else if (key === "Escape") buttonText = "AC";
+
+            if (buttonText === null) return;
+
+            event.preventDefault();
+
+            // Find and click the matching Streamlit calculator button.
+            const buttons = parentWindow.document.querySelectorAll("button");
+            for (const button of buttons) {
+                if (button.innerText.trim() === buttonText) {
+                    button.click();
+                    break;
+                }
+            }
+        });
+    })();
+    </script>
+    """, height=0)
     s = st.session_state
     active = [KEYS[a] for a, on in (("INV", s.inv), ("HYP", s.hyp)) if on]
     if active:
