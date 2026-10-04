@@ -474,9 +474,6 @@ div[data-testid="stExpander"] strong { color:#1f3a8a; }
 /* key flash when triggered from the physical keyboard */
 div[class*="st-key-"].kb-press button { transform:translateY(4px) scale(.97) !important; box-shadow:0 0 0 var(--edge) !important; filter:brightness(1.08); }
 
-/* shortcuts table */
-div[data-testid="stExpander"] table { width:100%; font-size:.85rem; }
-div[data-testid="stExpander"] th, div[data-testid="stExpander"] td { color:inherit !important; padding:.2rem .4rem; border-color:rgba(120,140,200,.25) !important; }
 </style>
 """
 
@@ -667,21 +664,5 @@ def inject_js(js: str):
     import streamlit.components.v1 as components   # older Streamlit
     components.html(tag, height=0)
 
-
-with st.expander("⌨️ Keyboard shortcuts"):
-    st.markdown(
-        "| Key | Action |\n|---|---|\n"
-        "| `0-9` `.` | Digits and decimal point |\n"
-        "| `+` `-` `*` `/` | Add, subtract, multiply, divide |\n"
-        "| `Enter` or `=` | Equals |\n"
-        "| `Backspace` | Delete last entry |\n"
-        "| `Esc` or `Delete` | Clear all (AC) |\n"
-        "| `(` `)` `%` `^` `!` | Brackets, percent, power, factorial |\n"
-        "| `s` `c` `t` | sin, cos, tan |\n"
-        "| `l` `g` `r` | ln, log, square root |\n"
-        "| `p` `e` | π and e |\n"
-        "| `a` `m` | Ans, mod |\n"
-        "| `h` `i` `d` | hyp, SHIFT, DEG/RAD/GRAD |"
-    )
 
 inject_js(KEYBOARD_JS.replace("__MAP__", json.dumps({k: KEYS[a] for k, a in KEYBOARD.items()})))
