@@ -1,7 +1,7 @@
 """
 Scientific Calculator  -  Soft Blue Edition (Streamlit)
 -------------------------------------------------------
-Run:    streamlit run soft_blue_calculator.py
+Run:   streamlit run soft_blue_calculator.py
 Needs: streamlit >= 1.39   (pip install -U streamlit)
 """
 
@@ -95,16 +95,16 @@ def prepare(expr: str, ans: float, angle: str) -> str:
     """Display expression -> Python expression."""
     s = expr.replace("mod", "§")
     s = (s.replace("×", "*").replace("÷", "/").replace("−", "-")
-         .replace("π", "pi").replace("√", "sqrt").replace("^", "**"))
+          .replace("π", "pi").replace("√", "sqrt").replace("^", "**"))
     s = s.replace("°", {"DEG": "", "RAD": "*(pi/180)", "GRAD": "*(10/9)"}[angle])
     s = s.replace("Ans", "(" + format(Decimal(repr(float(ans))), "f") + ")")
     s = re.sub(r"(\d+)P(\d+)", r"perm(\1,\2)", s)                # 5P2
     s = re.sub(r"(\d+)C(\d+)", r"comb(\1,\2)", s)                # 5C2
-    s = re.sub(r"(\d+(?:\.\d+)?)!", r"fact(\1)", s)             # 5!
-    s = re.sub(r"(\d+(?:\.\d+)?)%", r"(\1/100)", s)             # 50%
-    s = re.sub(r"\b(pi|e)(?=[\d(])", r"\1*", s)                # pi( -> pi*(
+    s = re.sub(r"(\d+(?:\.\d+)?)!", r"fact(\1)", s)              # 5!
+    s = re.sub(r"(\d+(?:\.\d+)?)%", r"(\1/100)", s)              # 50%
+    s = re.sub(r"\b(pi|e)(?=[\d(])", r"\1*", s)                  # pi( -> pi*(
     s = re.sub(r"(?<=[\d)])(?=[A-Za-z(])", "*", s)               # 2sin( / 3( / )(
-    s = re.sub(r"(?<=\))(?=\d)", "*", s)                        # )5
+    s = re.sub(r"(?<=\))(?=\d)", "*", s)                         # )5
     return s.replace("§", "%")
 
 
@@ -181,7 +181,7 @@ TOKEN_END = re.compile("(?:(?:" + "|".join(_NAMES) + r")\(|√\(|Ans|mod|×10\^\
 def insert(t: str):
     s = st.session_state
     binary, postfix = t in BIN_TOKENS, t in POSTFIX
-    if s.fresh:                                       # after '=', a new number starts a fresh expression
+    if s.fresh:                                     # after '=', a new number starts a fresh expression
         if not (binary or postfix):
             s.expr = ""
         s.fresh = False
@@ -372,33 +372,12 @@ def press(a: str):
         press_digit(a)
     elif a in ("(", ")"):
         press_bracket(a)
-    else:                                               # + − × ÷ %
+    else:                                           # + − × ÷ %
         insert(a)
 
 
 # ════════════════════════════════════════════════════════════════════
-#  3.  CALLBACK FOR KEYBOARD INPUT
-# ════════════════════════════════════════════════════════════════════
-def handle_keyboard_input():
-    val = st.session_state.get("kb_input", "")
-    if not val:
-        return
-    for ch in val:
-        if ch.isdigit():
-            press_digit(ch)
-        elif ch == ".":
-            press_dot()
-        elif ch in ("+", "-j", "*", "/", "%", "(", ")"):
-            op_map = {"-j": "−", "*": "×", "/": "÷"}
-            press(op_map.get(ch, ch))
-        elif ch == "=":
-            press_equal()
-    # Reset text input field after processing
-    st.session_state["kb_input"] = ""
-
-
-# ════════════════════════════════════════════════════════════════════
-#  4.  SOFT BLUE CUTE LOOK
+#  3.  SOFT BLUE CUTE LOOK
 # ════════════════════════════════════════════════════════════════════
 STYLE = """
 <style>
@@ -498,9 +477,9 @@ def lcd_html() -> str:
     """Top line: input.  Bottom line: answer / live result."""
     s = st.session_state
 
-    if s.fresh:                                       # after '=' was pressed
+    if s.fresh:                                     # after '=' was pressed
         inp, res, cls = s.top, s.expr, " pop"
-    else:                                               # while typing
+    else:                                           # while typing
         inp, res, cls = s.expr, "", " live"
         if s.expr and not re.fullmatch(r"[\d.]+", s.expr):
             try:
@@ -543,7 +522,7 @@ GRID = [
     [("num", "1"), ("num", "2"), ("num", "3"), ("op", "−"), ("ext", "ANS")],
     [("num", "0"), ("num", "."), ("num", "SIGN"), ("op", "+"), ("eq", "=")],
 ]
-SEPARATE_AFTER = {0, 5}     # a thin divider is drawn after these rows (memory | science | keypad)
+SEPARATE_AFTER = {0, 5}      # a thin divider is drawn after these rows (memory | science | keypad)
 KEYS = {a: f"{k}_{r}{c}" for r, row in enumerate(GRID) for c, (k, a) in enumerate(row)}
 
 STATIC_LABELS = {
@@ -569,7 +548,7 @@ def label(a: str) -> str:
 
 
 # ════════════════════════════════════════════════════════════════════
-#  5.  RENDER  (fragment = only the calculator reruns => smoother)
+#  4.  RENDER  (fragment = only the calculator reruns => smoother)
 # ════════════════════════════════════════════════════════════════════
 _fragment = getattr(st, "fragment", None) or getattr(st, "experimental_fragment", None) \
     or (lambda f: f)
@@ -582,10 +561,6 @@ st.markdown('<div class="face"><i class="cheek"></i><i class="eye"></i><i class=
 @_fragment
 def calculator():
     s = st.session_state
-    
-    # Hidden text input for keyboard typing support
-    st.text_input("Type numbers here:", key="kb_input", on_change=handle_keyboard_input, label_visibility="collapsed")
-
     active = [KEYS[a] for a, on in (("INV", s.inv), ("HYP", s.hyp)) if on]
     if active:
         rules = "".join(
