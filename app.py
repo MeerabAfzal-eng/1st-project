@@ -555,6 +555,12 @@ _fragment = getattr(st, "fragment", None) or getattr(st, "experimental_fragment"
     or (lambda f: f)
 
 st.markdown(STYLE, unsafe_allow_html=True)
+st.markdown(
+    '<h2 style="text-align:center; color:#244A7C; margin:0 0 .45rem 0; '
+    'font-family:Fredoka,sans-serif; font-size:1.45rem; font-weight:600;">'
+    'Meerab | Scientific Calculator</h2>',
+    unsafe_allow_html=True,
+)
 st.markdown('<div class="face"><i class="cheek"></i><i class="eye"></i><i class="mouth"></i>'
             '<i class="eye"></i><i class="cheek"></i></div>', unsafe_allow_html=True)
 
